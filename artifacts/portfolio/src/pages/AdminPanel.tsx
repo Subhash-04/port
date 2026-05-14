@@ -5,7 +5,7 @@ interface Work { id: number; title: string; description: string; imageUrl: strin
 interface Testimonial { id: number; name: string; role: string; quote: string; displayOrder: number; }
 type ContentMap = Record<string, string>;
 type Step = 'password' | 'otp' | 'dashboard';
-type Tab = 'works' | 'testimonials' | 'content' | 'password';
+type Tab = 'works' | 'testimonials' | 'hero' | 'about' | 'work' | 'services' | 'contact' | 'footer' | 'analytics' | 'password';
 
 const SESSION_KEY = 'admin_session_token';
 
@@ -650,6 +650,147 @@ function ContentTab() {
   );
 }
 
+/* ─── SECTION TAB (generic, reused for Hero / About / Work / Services / Contact / Footer) ─── */
+function SectionTab({ section, fields }: { section: string; fields: ContentSection['keys'] }) {
+  const [content, setContent] = useState<ContentMap>({});
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState<string | null>(null);
+  const [saved, setSaved] = useState<string | null>(null);
+
+  useEffect(() => {
+    apiFetch(`/api/sections/${section}`)
+      .then(setContent)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [section]);
+
+  const save = async (key: string, value: string) => {
+    setSaving(key);
+    try {
+      await apiFetch(`/api/sections/${section}/${key}`, { method: 'PUT', headers: apiHeaders(), body: JSON.stringify({ value }) });
+      setContent(c => ({ ...c, [key]: value }));
+      setSaved(key);
+      setTimeout(() => setSaved(null), 2200);
+    } catch {}
+    setSaving(null);
+  };
+
+  const title = section.charAt(0).toUpperCase() + section.slice(1);
+  if (loading) return <div style={{ padding: 40, color: '#6b6a63', fontFamily: 'Geist, sans-serif' }}>Loading…</div>;
+
+  return (
+    <div>
+      <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 32, color: '#1a1a17', margin: '0 0 6px' }}>{title}</h2>
+      <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#6b6a63', fontSize: 14, margin: '0 0 24px' }}>Editable content for the <b>{title}</b> section.</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        {fields.map(({ key, label, hint, multiline, isImage }) => {
+          const val = content[key] ?? '';
+          return (
+            <div key={key} style={{ ...glass, padding: '18px 22px' }}>
+              <Label>{label}</Label>
+              <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#6b6a63', fontSize: 12, margin: '0 0 8px' }}>{hint}</p>
+              {isImage && val && (
+                <div style={{ width: '100%', height: 90, borderRadius: 10, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.08)', marginBottom: 10 }}>
+                  <img src={val} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                </div>
+              )}
+              <ContentField value={val} multiline={multiline} onSave={v => save(key, v)} saving={saving === key} saved={saved === key} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ─── ANALYTICS TAB ─── */
+interface AnalyticsStats {
+  total: number; today: number; thisWeek: number;
+  sections: { section: string; count: number }[];
+  recent: { id: number; event_type: string; section: string | null; created_at: string }[];
+}
+
+function AnalyticsTab() {
+  const [stats, setStats] = useState<AnalyticsStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    apiFetch('/api/analytics/stats', { headers: apiHeaders() })
+      .then(setStats)
+      .catch(() => setError('Failed to load analytics'))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div style={{ padding: 40, color: '#6b6a63', fontFamily: 'Geist, sans-serif' }}>Loading analytics…</div>;
+  if (error || !stats) return <div style={{ padding: 40, color: '#b91c1c', fontFamily: 'Geist, sans-serif' }}>{error || 'No data'}</div>;
+
+  const maxSectionCount = Math.max(1, ...stats.sections.map(s => s.count));
+
+  return (
+    <div>
+      <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 32, color: '#1a1a17', margin: '0 0 6px' }}>Analytics</h2>
+      <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#6b6a63', fontSize: 14, margin: '0 0 28px' }}>Portfolio visitor stats — live from your API.</p>
+
+      {/* Stat cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
+        {([
+          { label: 'All Time', value: stats.total, color: '#c64f17' },
+          { label: 'This Week', value: stats.thisWeek, color: '#5b6244' },
+          { label: 'Today', value: stats.today, color: '#1a1a17' },
+        ] as const).map(({ label, value, color }) => (
+          <div key={label} style={{ ...clay, padding: '24px 22px' }}>
+            <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#6b6a63', marginBottom: 8 }}>{label}</div>
+            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 52, color, lineHeight: 1 }}>{value.toLocaleString()}</div>
+            <div style={{ fontFamily: 'Geist, Inter, sans-serif', fontSize: 12, color: '#6b6a63', marginTop: 4 }}>page views</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Section engagement */}
+      {stats.sections.length > 0 && (
+        <div style={{ ...glass, padding: '22px 26px', marginBottom: 20 }}>
+          <h3 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: '#1a1a17', margin: '0 0 18px' }}>Section Engagement</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {[...stats.sections].sort((a, b) => b.count - a.count).map(s => (
+              <div key={s.section}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+                  <span style={{ fontFamily: 'Geist, Inter, sans-serif', fontSize: 14, color: '#1a1a17', textTransform: 'capitalize' }}>{s.section}</span>
+                  <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 12, color: '#6b6a63' }}>{s.count} views</span>
+                </div>
+                <div style={{ height: 6, background: 'rgba(0,0,0,0.07)', borderRadius: 99, overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${(s.count / maxSectionCount) * 100}%`, background: 'linear-gradient(90deg, #c64f17, #d46a2a)', borderRadius: 99 }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Recent events */}
+      <div style={{ ...glass, padding: '22px 26px' }}>
+        <h3 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: '#1a1a17', margin: '0 0 16px' }}>Recent Activity</h3>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {stats.recent.length === 0 && (
+            <div style={{ color: '#6b6a63', fontFamily: 'Geist, sans-serif', fontSize: 14, textAlign: 'center', padding: '24px 0' }}>No events yet — visit the portfolio to start tracking.</div>
+          )}
+          {stats.recent.slice(0, 12).map((e, i) => (
+            <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '10px 0', borderBottom: i < Math.min(stats.recent.length, 12) - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none' }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: e.event_type === 'pageview' ? '#c64f17' : '#5b6244', flexShrink: 0 }} />
+              <span style={{ fontFamily: 'Geist, Inter, sans-serif', fontSize: 13, color: '#1a1a17', flex: 1 }}>
+                {e.event_type === 'pageview' ? 'Page view' : `Section: ${e.section}`}
+              </span>
+              <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, color: '#6b6a63' }}>
+                {new Date(e.created_at).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── PASSWORD TAB ─── */
 function PasswordTab() {
   const [pw, setPw] = useState('');
@@ -709,64 +850,98 @@ function NavItem({ icon, label, active, onClick }: { icon: React.ReactNode; labe
 }
 
 /* ─── DASHBOARD ─── */
+/* section lookup map */
+const SECTION_FIELDS: Record<string, ContentSection['keys']> = {};
+CONTENT_SECTIONS.forEach(s => { SECTION_FIELDS[s.section.toLowerCase()] = s.keys; });
+
+type NavGroup = { label: string; items: { id: Tab; label: string; icon: React.ReactNode }[] };
+
 function Dashboard({ onSignOut }: { onSignOut: () => void }) {
   const [tab, setTab] = useState<Tab>('works');
 
-  const navItems: { id: Tab; label: string; icon: React.ReactNode }[] = [
-    { id: 'works', label: 'Works', icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> },
-    { id: 'testimonials', label: 'Testimonials', icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
-    { id: 'content', label: 'Site Content', icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> },
-    { id: 'password', label: 'Password', icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> },
+  const navGroups: NavGroup[] = [
+    {
+      label: 'Manage',
+      items: [
+        { id: 'works', label: 'Works', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> },
+        { id: 'testimonials', label: 'Testimonials', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
+      ],
+    },
+    {
+      label: 'Content',
+      items: [
+        { id: 'hero', label: 'Hero', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> },
+        { id: 'about', label: 'About', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> },
+        { id: 'work', label: 'Work Section', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> },
+        { id: 'services', label: 'Services', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> },
+        { id: 'contact', label: 'Contact', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> },
+        { id: 'footer', label: 'Footer', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="3" y1="22" x2="21" y2="22"/><path d="M5 22V10l7-8 7 8v12"/></svg> },
+      ],
+    },
+    {
+      label: 'Settings',
+      items: [
+        { id: 'analytics', label: 'Analytics', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> },
+        { id: 'password', label: 'Password', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> },
+      ],
+    },
   ];
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', background: BG }}>
       {/* Sidebar */}
       <div style={{
-        width: 248, flexShrink: 0, display: 'flex', flexDirection: 'column',
-        background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        width: 240, flexShrink: 0, display: 'flex', flexDirection: 'column',
+        background: 'rgba(255,255,255,0.78)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
         borderRight: '1px solid rgba(255,255,255,0.85)',
         boxShadow: '4px 0 24px rgba(0,0,0,0.06), inset -1px 0 0 rgba(0,0,0,0.04)',
-        padding: '32px 16px', position: 'sticky', top: 0, height: '100vh', overflow: 'auto',
+        padding: '28px 14px', position: 'sticky', top: 0, height: '100vh', overflow: 'auto',
       }}>
         {/* Logo */}
-        <div style={{ paddingLeft: 8, marginBottom: 32 }}>
-          <Logo size={26} />
+        <div style={{ paddingLeft: 8, marginBottom: 28 }}>
+          <Logo size={24} />
           <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#6b6a63', marginTop: 2 }}>Admin Panel</div>
         </div>
 
-        {/* Nav */}
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
-          {navItems.map(n => (
-            <NavItem key={n.id} id={n.id} label={n.label} icon={n.icon} active={tab === n.id} onClick={() => setTab(n.id)} />
+        {/* Nav groups */}
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: 20, flex: 1 }}>
+          {navGroups.map(group => (
+            <div key={group.label}>
+              <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 9, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#9a9890', paddingLeft: 14, marginBottom: 4 }}>{group.label}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {group.items.map(n => (
+                  <NavItem key={n.id} id={n.id} label={n.label} icon={n.icon} active={tab === n.id} onClick={() => setTab(n.id)} />
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
 
         {/* Bottom actions */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24 }}>
-          <a
-            href="/"
-            style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', background: 'rgba(91,98,68,0.08)', border: '1px solid rgba(91,98,68,0.18)', borderRadius: 14, textDecoration: 'none', color: '#5b6244', fontFamily: 'Geist, Inter, sans-serif', fontSize: 14, fontWeight: 500, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.7)', transition: 'all 150ms ease' }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 20 }}>
+          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', background: 'rgba(91,98,68,0.08)', border: '1px solid rgba(91,98,68,0.18)', borderRadius: 12, textDecoration: 'none', color: '#5b6244', fontFamily: 'Geist, Inter, sans-serif', fontSize: 13, fontWeight: 500 }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
             View Site
           </a>
-          <button
-            onClick={onSignOut}
-            style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '11px 16px', background: 'rgba(185,28,28,0.07)', border: '1px solid rgba(185,28,28,0.15)', borderRadius: 14, cursor: 'pointer', color: '#b91c1c', fontFamily: 'Geist, Inter, sans-serif', fontSize: 14, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.7)' }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <button onClick={onSignOut} style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '10px 14px', background: 'rgba(185,28,28,0.07)', border: '1px solid rgba(185,28,28,0.15)', borderRadius: 12, cursor: 'pointer', color: '#b91c1c', fontFamily: 'Geist, Inter, sans-serif', fontSize: 13 }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Sign Out
           </button>
         </div>
       </div>
 
       {/* Main content */}
-      <div style={{ flex: 1, padding: '48px 40px', overflow: 'auto' }}>
+      <div style={{ flex: 1, padding: '44px 40px', overflow: 'auto' }}>
         <div style={{ maxWidth: 920, margin: '0 auto' }}>
           {tab === 'works' && <WorksTab />}
           {tab === 'testimonials' && <TestimonialsTab />}
-          {tab === 'content' && <ContentTab />}
+          {tab === 'hero' && <SectionTab section="hero" fields={SECTION_FIELDS['hero'] ?? []} />}
+          {tab === 'about' && <SectionTab section="about" fields={SECTION_FIELDS['about'] ?? []} />}
+          {tab === 'work' && <SectionTab section="work" fields={SECTION_FIELDS['work'] ?? []} />}
+          {tab === 'services' && <SectionTab section="services" fields={SECTION_FIELDS['services'] ?? []} />}
+          {tab === 'contact' && <SectionTab section="contact" fields={SECTION_FIELDS['contact'] ?? []} />}
+          {tab === 'footer' && <SectionTab section="footer" fields={SECTION_FIELDS['footer'] ?? []} />}
+          {tab === 'analytics' && <AnalyticsTab />}
           {tab === 'password' && <PasswordTab />}
         </div>
       </div>

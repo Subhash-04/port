@@ -140,96 +140,94 @@ function ProjectModal({ project, onClose }: { project: CmsProject; onClose: () =
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.22 }}
+      transition={{ duration: 0.25 }}
       onClick={onClose}
       style={{
         position: 'fixed', inset: 0, zIndex: 9999,
-        background: 'rgba(10,9,7,0.72)',
-        backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+        background: 'rgba(6,5,4,0.88)',
+        backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
       }}
     >
       <motion.div
-        initial={{ opacity: 0, y: 40, scale: 0.96 }}
+        initial={{ opacity: 0, y: 52, scale: 0.93 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        exit={{ opacity: 0, y: 20, scale: 0.97 }}
+        transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
         onClick={e => e.stopPropagation()}
         style={{
-          background: 'rgba(244,241,234,0.96)',
-          backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)',
-          borderRadius: 28, overflow: 'hidden',
-          border: '1px solid rgba(255,255,255,0.9)',
-          boxShadow: '0 32px 80px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,1)',
-          maxWidth: 860, width: '100%',
+          position: 'relative',
+          background: 'linear-gradient(140deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.06) 60%, rgba(198,79,23,0.04) 100%)',
+          backdropFilter: 'blur(72px) saturate(200%)',
+          WebkitBackdropFilter: 'blur(72px) saturate(200%)',
+          borderRadius: 32, overflow: 'hidden',
+          border: '1px solid rgba(255,255,255,0.16)',
+          boxShadow: '0 52px 130px rgba(0,0,0,0.7), 0 0 0 0.5px rgba(255,255,255,0.06), inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.2)',
+          maxWidth: 880, width: '100%',
           display: 'grid', gridTemplateColumns: '1fr 1fr',
           maxHeight: '90vh',
         }}
       >
+        {/* Glass shimmer overlay */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 45%, rgba(198,79,23,0.03) 100%)', pointerEvents: 'none', zIndex: 1 }} />
+
         {/* Left: image */}
-        <div style={{ position: 'relative', minHeight: 320, overflow: 'hidden', background: '#1a1a17' }}>
+        <div style={{ position: 'relative', minHeight: 340, overflow: 'hidden', background: '#0c0b09', zIndex: 2 }}>
           {project.imageUrl && (
-            <img
-              src={project.imageUrl}
-              alt={project.title}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            <img src={project.imageUrl} alt={project.title}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', opacity: 0.88 }}
             />
           )}
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(26,26,23,0.2) 0%, transparent 60%)' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(6,5,4,0.35) 0%, transparent 55%), linear-gradient(to top, rgba(6,5,4,0.55) 0%, transparent 55%)' }} />
           <div style={{
-            position: 'absolute', top: 20, left: 20,
-            background: 'rgba(26,26,23,0.72)', backdropFilter: 'blur(12px)',
+            position: 'absolute', top: 18, left: 18,
+            background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
             borderRadius: 999, padding: '5px 14px',
+            border: '1px solid rgba(255,255,255,0.18)',
             fontFamily: "'Geist Mono', monospace", fontSize: 10, letterSpacing: '0.15em',
-            textTransform: 'uppercase', color: '#f0a36c',
+            textTransform: 'uppercase', color: '#ffc99a',
           }}>{project.category}</div>
         </div>
 
         {/* Right: content */}
-        <div style={{ padding: '36px 36px 36px 36px', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 20 }}>
-            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(28px, 3.5vw, 42px)', color: '#1a1a17', lineHeight: 0.95, margin: 0 }}>
+        <div style={{ padding: '40px 36px 36px', display: 'flex', flexDirection: 'column', overflowY: 'auto', position: 'relative', zIndex: 2 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 22 }}>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(26px, 3.5vw, 42px)', color: '#f5f0e8', lineHeight: 0.95, margin: 0 }}>
               {project.title}
             </h2>
-            <button
-              onClick={onClose}
-              style={{
-                flexShrink: 0, width: 36, height: 36, borderRadius: '50%',
-                background: 'rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.1)',
-                display: 'grid', placeItems: 'center', cursor: 'pointer',
-                color: '#6b6a63', transition: 'background 200ms',
-              }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
+            <button onClick={onClose} style={{
+              flexShrink: 0, width: 36, height: 36, borderRadius: '50%',
+              background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.14)',
+              display: 'grid', placeItems: 'center', cursor: 'pointer',
+              color: 'rgba(255,255,255,0.65)', transition: 'background 200ms',
+            }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
             </button>
           </div>
 
           {project.description && (
-            <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#2c2a25', fontSize: 15, lineHeight: 1.75, margin: '0 0 28px', flex: 1 }}>
+            <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: 'rgba(255,255,255,0.65)', fontSize: 15, lineHeight: 1.78, margin: '0 0 30px', flex: 1 }}>
               {project.description}
             </p>
           )}
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 'auto' }}>
             {project.siteUrl && (
-              <a
-                href={project.siteUrl}
-                target="_blank" rel="noreferrer"
-                style={{
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                  background: '#1a1a17', color: '#f4f1ea', borderRadius: 12,
-                  padding: '13px 24px', fontFamily: 'Geist, Inter, sans-serif',
-                  fontSize: 14, fontWeight: 600, textDecoration: 'none',
-                  transition: 'background 200ms',
-                }}
-              >
+              <a href={project.siteUrl} target="_blank" rel="noreferrer" style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                background: 'linear-gradient(135deg, #c64f17 0%, #d45a1b 100%)',
+                color: '#fff', borderRadius: 14,
+                padding: '13px 24px', fontFamily: 'Geist, Inter, sans-serif',
+                fontSize: 14, fontWeight: 600, textDecoration: 'none',
+                boxShadow: '0 8px 28px rgba(198,79,23,0.45), inset 0 1px 0 rgba(255,255,255,0.2)',
+                border: '1px solid rgba(255,255,255,0.12)',
+              }}>
                 Visit Site
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg>
               </a>
             )}
-            <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, color: '#6b6a63', letterSpacing: '0.1em', textAlign: 'center' }}>
-              Press ESC to close
+            <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.12em', textAlign: 'center' }}>
+              ESC to close
             </div>
           </div>
         </div>
@@ -1091,10 +1089,27 @@ export default function Portfolio() {
       .then(r => r.json())
       .then((data: CmsTestimonial[]) => { if (Array.isArray(data) && data.length > 0) setTestimonials(data); })
       .catch(() => {});
-    fetch('/api/content')
+    fetch('/api/sections')
       .then(r => r.json())
       .then((data: ContentMap) => { if (data && typeof data === 'object') setContent(data); })
       .catch(() => {});
+
+    // Analytics tracking
+    fetch('/api/analytics/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'pageview' }) }).catch(() => {});
+    const milestones = new Set<string>();
+    const sections = ['about', 'work', 'services', 'testimonials', 'contact'];
+    const handleScroll = () => {
+      const scrollPct = window.scrollY / Math.max(1, document.body.scrollHeight - window.innerHeight) * 100;
+      sections.forEach((s, i) => {
+        const threshold = (i + 1) * (100 / (sections.length + 1));
+        if (scrollPct >= threshold && !milestones.has(s)) {
+          milestones.add(s);
+          fetch('/api/analytics/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'section_view', section: s }) }).catch(() => {});
+        }
+      });
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
