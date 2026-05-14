@@ -100,75 +100,78 @@ function SunStar({ size = 64 }: { size?: number }) {
   );
 }
 
-/* ─── HERO IDENTITY CARD ─── */
-function HeroIdentityCard() {
+/* ─── HERO POSTER CARD ─── */
+function HeroPosterCard() {
   const [hovered, setHovered] = useState(false);
-
   return (
     <div
-      className="hero-id-card"
+      className="hero-card-wrap"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      style={{ position: 'relative', width: '100%', maxWidth: 420, margin: '0 auto' }}
     >
-      {/* Stripe texture layer */}
-      <div className="hero-id-stripes" />
-
-      {/* Content layer */}
-      <div className="hero-id-content">
-        {/* Top meta row */}
-        <div className="hero-id-top-row">
-          <div className="hero-id-meta-group">
-            <span className="hero-id-meta">PORTFOLIO ·</span>
-            <span className="hero-id-meta">2025 / 26</span>
-          </div>
-          <div className="hero-id-meta-group" style={{ textAlign: 'right' }}>
-            <span className="hero-id-meta">GUNTUR · IN</span>
-            <span className="hero-id-meta">16.51° N · 80.65° E</span>
-          </div>
+      <div className="photo-frame">
+        <div className="photo-grid" />
+        {/* Hover photo layer */}
+        <div
+          className="photo-hover-layer"
+          style={{
+            opacity: hovered ? 1 : 0,
+            backgroundImage: `url(https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&q=80)`,
+          }}
+        >
+          <div className="photo-hover-overlay" />
+          <div className="photo-hover-tag">Subhash Mandalapu</div>
         </div>
-
-        {/* Asterisk top-right ornament */}
-        <div className="hero-id-star">
-          <Asterisk size={22} color="#c64f17" />
-        </div>
-
-        {/* Center name */}
-        <div className="hero-id-name-wrap">
-          <div className="hero-id-name-first">Subhash</div>
-          <div className="hero-id-name-last">Mandalapu</div>
-        </div>
-
-        {/* Bottom meta row */}
-        <div className="hero-id-bottom-row">
-          <div className="hero-id-meta-group">
-            <span className="hero-id-meta">DESIGN ·</span>
-            <span className="hero-id-meta">DEVELOPMENT</span>
+        {/* Poster content overlay */}
+        <div style={{
+          position: 'absolute', inset: 0, padding: 24, zIndex: 4,
+          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+          opacity: hovered ? 0 : 1, transition: 'opacity 380ms ease',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+            <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(26,26,23,0.75)', lineHeight: 1.7 }}>
+              PORTFOLIO ·<br />2025 / 26
+            </div>
+            <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(26,26,23,0.75)', textAlign: 'right', lineHeight: 1.7 }}>
+              GUNTUR · IN<br />16.51° N · 80.65° E
+            </div>
           </div>
-          <div className="hero-id-meta-group" style={{ textAlign: 'right', alignItems: 'flex-end' }}>
-            <Asterisk size={10} color="rgba(26,26,23,0.4)" />
-            <span className="hero-id-meta">EST · 2022</span>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontFamily: "'Instrument Serif', serif", color: '#1a1a17', fontSize: 'clamp(56px, 9vw, 88px)', lineHeight: 0.85 }}>
+              Subhash
+            </div>
+            <div style={{ fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', color: '#c64f17', fontSize: 'clamp(32px, 5.5vw, 48px)', lineHeight: 1, marginTop: 6 }}>
+              Mandalapu
+            </div>
           </div>
-        </div>
-
-        {/* Freelancing badge */}
-        <div className="hero-id-badge">
-          <span className="hero-id-badge-dot" />
-          CURRENTLY · FREELANCING
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+            <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(26,26,23,0.75)', lineHeight: 1.7 }}>
+              DESIGN ·<br />DEVELOPMENT
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(26,26,23,0.75)' }}>
+              <Asterisk size={12} color="rgba(26,26,23,0.6)" /> EST · 2022
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Hover image overlay */}
-      <div
-        className="hero-id-photo"
-        style={{
-          opacity: hovered ? 1 : 0,
-          backgroundImage: `url(https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&q=80)`,
-        }}
-      >
-        <div className="hero-id-photo-overlay" />
-        <div className="hero-id-photo-tag">
-          <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#f4f1ea' }}>Subhash Mandalapu</span>
-        </div>
+      {/* Floating badge */}
+      <div style={{
+        position: 'absolute', bottom: -22, left: -22,
+        background: 'rgba(26,26,23,0.95)', color: '#f4f1ea',
+        backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+        borderRadius: 999, padding: '11px 20px',
+        display: 'flex', alignItems: 'center', gap: 10,
+        boxShadow: '0 8px 32px rgba(0,0,0,0.28)',
+        fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase',
+        zIndex: 10,
+      }}>
+        <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#16a34a', boxShadow: '0 0 0 3px rgba(22,163,74,0.22)', flexShrink: 0, animation: 'portPulse 2.2s ease-in-out infinite' }} />
+        Currently · Freelancing
+      </div>
+      {/* Asterisk ornament */}
+      <div style={{ position: 'absolute', top: -20, right: -12, zIndex: 10 }}>
+        <Asterisk size={36} color="#c64f17" />
       </div>
     </div>
   );
@@ -230,8 +233,16 @@ function Hero() {
         <div className="hero-grid">
           {/* Left: text */}
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: '#ebe6db', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 999, padding: '8px 14px', fontSize: 13, color: '#2c2a25', marginBottom: 28, width: 'fit-content' }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#16a34a', boxShadow: '0 0 0 4px rgba(22,163,74,0.18)', animation: 'portPulse 2.2s ease-in-out infinite' }} />
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 10,
+              background: 'rgba(255,255,255,0.65)',
+              backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
+              border: '1px solid rgba(255,255,255,0.8)',
+              borderRadius: 999, padding: '8px 16px', fontSize: 13, color: '#2c2a25',
+              marginBottom: 28, width: 'fit-content',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.95)',
+            }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#16a34a', boxShadow: '0 0 0 4px rgba(22,163,74,0.18)', animation: 'portPulse 2.2s ease-in-out infinite', flexShrink: 0 }} />
               Open to work · Freelance & full-time
             </div>
 
@@ -266,9 +277,9 @@ function Hero() {
             </div>
           </div>
 
-          {/* Right: identity card */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <HeroIdentityCard />
+          {/* Right: poster card */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 0' }}>
+            <HeroPosterCard />
           </div>
         </div>
 
@@ -311,7 +322,14 @@ function About() {
           <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(40px, 5vw, 64px)', color: '#1a1a17', lineHeight: 0.95, margin: 0 }}>
             A short<br /><span style={{ fontStyle: 'italic', color: '#c64f17' }}>introduction.</span>
           </h2>
-          <div style={{ marginTop: 40, borderRadius: 24, overflow: 'hidden', height: 260, border: '1px solid rgba(0,0,0,0.08)', background: '#ebe6db' }}>
+          <div style={{
+            marginTop: 40, borderRadius: 24, overflow: 'hidden', height: 260,
+            border: '1px solid rgba(255,255,255,0.7)',
+            background: 'rgba(255,255,255,0.48)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.9)',
+          }}>
             <ErrorBoundary fallback={<ToolsFallback />}>
               <TechPillsCanvas />
             </ErrorBoundary>
@@ -323,20 +341,6 @@ function About() {
           </div>
           <div style={{ color: '#2c2a25', fontSize: 18, lineHeight: 1.7, marginBottom: 32, fontFamily: 'Geist, Inter, sans-serif' }}>
             <DecryptedText text={aboutText2} animateOn="view" sequential revealDirection="start" speed={14} className="port-decrypted-revealed" encryptedClassName="port-decrypted-encrypted" />
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-            <div>
-              <div className="port-eyebrow" style={{ marginBottom: 10 }}>— Worked with</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {companies.map(c => <span key={c} className="port-tag">{c}</span>)}
-              </div>
-            </div>
-            <div>
-              <div className="port-eyebrow" style={{ marginBottom: 10 }}>— Tools of trade</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {tools.map(t => <span key={t} className="port-tag">{t}</span>)}
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -415,7 +419,7 @@ function useScrollReveal(ref: React.RefObject<HTMLElement | null>, threshold = 0
   return visible;
 }
 
-/* ─── SERVICE ROW ─── */
+/* ─── SERVICE ROW (glass card) ─── */
 function ServiceRow({ s, delay }: { s: typeof services[0]; delay: number }) {
   const rowRef = useRef<HTMLDivElement>(null);
   const visible = useScrollReveal(rowRef as React.RefObject<HTMLElement>, 0.2);
@@ -431,27 +435,23 @@ function ServiceRow({ s, delay }: { s: typeof services[0]; delay: number }) {
         gridTemplateColumns: '72px 1fr auto',
         alignItems: 'center',
         gap: 24,
-        padding: '28px 0',
-        borderBottom: '1px solid rgba(0,0,0,0.1)',
+        padding: hovered ? '28px 20px' : '28px 8px',
+        borderBottom: '1px solid rgba(0,0,0,0.08)',
         cursor: 'default',
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(32px)',
-        transition: `opacity 0.65s ease ${delay}ms, transform 0.65s cubic-bezier(.2,.7,.2,1) ${delay}ms`,
+        transition: `opacity 0.65s ease ${delay}ms, transform 0.65s cubic-bezier(.2,.7,.2,1) ${delay}ms, padding 350ms ease, background 350ms ease, border-radius 350ms ease, box-shadow 350ms ease, border-color 350ms ease`,
         position: 'relative',
-        overflow: 'hidden',
+        borderRadius: hovered ? 20 : 0,
+        background: hovered ? 'rgba(255,255,255,0.62)' : 'transparent',
+        backdropFilter: hovered ? 'blur(20px)' : 'none',
+        WebkitBackdropFilter: hovered ? 'blur(20px)' : 'none',
+        borderTop: hovered ? '1px solid rgba(255,255,255,0.8)' : '1px solid transparent',
+        boxShadow: hovered ? '0 12px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.9)' : 'none',
+        marginLeft: hovered ? -8 : 0,
+        marginRight: hovered ? -8 : 0,
       }}
     >
-      {/* Hover fill */}
-      <div style={{
-        position: 'absolute', inset: 0, left: 0,
-        background: 'rgba(198,79,23,0.04)',
-        transform: hovered ? 'scaleX(1)' : 'scaleX(0)',
-        transformOrigin: 'left',
-        transition: 'transform 400ms cubic-bezier(.2,.7,.2,1)',
-        pointerEvents: 'none',
-        borderRadius: 8,
-      }} />
-
       {/* Number */}
       <div style={{
         fontFamily: "'Geist Mono', monospace",
@@ -459,11 +459,10 @@ function ServiceRow({ s, delay }: { s: typeof services[0]; delay: number }) {
         color: hovered ? '#c64f17' : '#6b6a63',
         letterSpacing: '0.12em',
         transition: 'color 300ms ease',
-        position: 'relative',
       }}>{s.num}</div>
 
       {/* Title + desc */}
-      <div style={{ position: 'relative', transform: hovered ? 'translateX(6px)' : 'translateX(0)', transition: 'transform 350ms cubic-bezier(.2,.7,.2,1)' }}>
+      <div style={{ transform: hovered ? 'translateX(4px)' : 'translateX(0)', transition: 'transform 350ms cubic-bezier(.2,.7,.2,1)' }}>
         <div style={{
           fontFamily: "'Instrument Serif', serif",
           fontSize: 'clamp(24px, 3vw, 40px)',
@@ -477,7 +476,7 @@ function ServiceRow({ s, delay }: { s: typeof services[0]; delay: number }) {
           color: '#6b6a63',
           lineHeight: 1.5,
           maxWidth: 420,
-          opacity: hovered ? 1 : 0.6,
+          opacity: hovered ? 1 : 0.55,
           transition: 'opacity 300ms ease',
         }}>{s.desc}</div>
       </div>
@@ -487,11 +486,11 @@ function ServiceRow({ s, delay }: { s: typeof services[0]; delay: number }) {
         width: 44, height: 44,
         borderRadius: '50%',
         border: `1px solid ${hovered ? '#c64f17' : 'rgba(0,0,0,0.12)'}`,
+        background: hovered ? 'rgba(198,79,23,0.06)' : 'transparent',
         display: 'grid', placeItems: 'center',
         color: hovered ? '#c64f17' : 'rgba(0,0,0,0.3)',
-        transform: hovered ? 'rotate(45deg) scale(1.08)' : 'rotate(0deg) scale(1)',
-        transition: 'transform 350ms cubic-bezier(.2,.7,.2,1), border-color 300ms ease, color 300ms ease',
-        position: 'relative',
+        transform: hovered ? 'rotate(45deg) scale(1.1)' : 'rotate(0deg) scale(1)',
+        transition: 'transform 350ms cubic-bezier(.2,.7,.2,1), border-color 300ms ease, color 300ms ease, background 300ms ease',
         flexShrink: 0,
       }}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
@@ -737,7 +736,15 @@ function Contact() {
               Available for new work — May 2026
             </div>
           </div>
-          <div style={{ background: '#f4f1ea', borderRadius: 24, padding: 32, border: '1px solid rgba(0,0,0,0.06)' }}>
+          <div style={{
+            background: 'rgba(255,255,255,0.62)',
+            backdropFilter: 'blur(28px)',
+            WebkitBackdropFilter: 'blur(28px)',
+            borderRadius: 24,
+            padding: 32,
+            border: '1px solid rgba(255,255,255,0.78)',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.95)',
+          }}>
             <ContactForm />
           </div>
         </div>

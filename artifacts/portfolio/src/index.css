@@ -101,15 +101,23 @@ body::before {
 
 /* ─── GLASS / CLAY CARD ─── */
 .glass-card {
-  background: rgba(255, 255, 255, 0.52);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.56);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: 28px;
   box-shadow:
     0 8px 40px rgba(0,0,0,0.08),
     0 2px 8px rgba(0,0,0,0.04),
-    inset 0 1px 0 rgba(255,255,255,0.85);
+    inset 0 1px 0 rgba(255,255,255,0.92);
+  transition: transform 280ms ease, box-shadow 280ms ease;
+}
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.11),
+    0 4px 12px rgba(0,0,0,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.92);
 }
 
 .glass-card-dark {
@@ -124,11 +132,33 @@ body::before {
 }
 
 .glass-chip {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9);
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.95);
+}
+
+/* ─── PROJECT TILE (glass) ─── */
+.project-tile-glass {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.07),
+    0 2px 8px rgba(0,0,0,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.88);
+  transition: transform 320ms cubic-bezier(.2,.7,.2,1), box-shadow 320ms ease;
+}
+.project-tile-glass:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.1),
+    0 6px 16px rgba(0,0,0,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.88);
 }
 
 /* ─── TYPOGRAPHY HELPERS ─── */
