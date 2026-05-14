@@ -603,7 +603,7 @@ class InfiniteGridMenu {
   }
 }
 
-export default function InfiniteMenu({ items = [], scale = 1.0 }: { items?: InfiniteMenuItem[]; scale?: number }) {
+export default function InfiniteMenu({ items = [], scale = 1.0, onItemClick }: { items?: InfiniteMenuItem[]; scale?: number; onItemClick?: (item: InfiniteMenuItem) => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [activeItem, setActiveItem] = useState<InfiniteMenuItem | null>(null);
   const [isMoving, setIsMoving] = useState(false);
@@ -631,29 +631,36 @@ export default function InfiniteMenu({ items = [], scale = 1.0 }: { items?: Infi
   }, [items, scale]);
 
   const handleButtonClick = () => {
-    if (!activeItem?.link) return;
-    if (activeItem.link.startsWith('http')) window.open(activeItem.link, '_blank');
+    if (!activeItem) return;
+    if (onItemClick) { onItemClick(activeItem); return; }
+    if (activeItem.link?.startsWith('http')) window.open(activeItem.link, '_blank');
   };
 
   if (webglFailed) {
     return (
       <div style={{ width: '100%', height: '100%', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', overflow: 'hidden' }}>
-        {items.map((p, i) => (
-          <a key={p.title} href={p.link} target="_blank" rel="noreferrer" style={{
-            position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
-            padding: 24, textDecoration: 'none', overflow: 'hidden',
-            backgroundImage: `url(${p.image})`, backgroundSize: 'cover', backgroundPosition: 'center',
-            minHeight: 200,
-            borderRight: i % 3 !== 2 ? '1px solid rgba(0,0,0,0.12)' : 'none',
-            borderBottom: i < 3 ? '1px solid rgba(0,0,0,0.12)' : 'none',
-          }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(26,26,23,0.85) 0%, transparent 60%)' }} />
-            <div style={{ position: 'relative', zIndex: 1 }}>
-              <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: '#f4f1ea', lineHeight: 1 }}>{p.title}</div>
-              <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#f0a36c', marginTop: 4 }}>{p.description}</div>
+        {items.map((p, i) => {
+          return (
+            <div
+              key={p.title}
+              onClick={() => onItemClick ? onItemClick(p) : (p.link?.startsWith('http') && window.open(p.link, '_blank'))}
+              style={{
+                position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+                padding: 24, overflow: 'hidden', cursor: 'pointer',
+                backgroundImage: `url(${p.image})`, backgroundSize: 'cover', backgroundPosition: 'center',
+                minHeight: 200,
+                borderRight: i % 3 !== 2 ? '1px solid rgba(0,0,0,0.12)' : 'none',
+                borderBottom: i < 3 ? '1px solid rgba(0,0,0,0.12)' : 'none',
+              }}
+            >
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(26,26,23,0.85) 0%, transparent 60%)' }} />
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: '#f4f1ea', lineHeight: 1 }}>{p.title}</div>
+                <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#f0a36c', marginTop: 4 }}>{p.description}</div>
+              </div>
             </div>
-          </a>
-        ))}
+          );
+        })}
       </div>
     );
   }

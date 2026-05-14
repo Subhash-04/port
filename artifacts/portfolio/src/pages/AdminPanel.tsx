@@ -361,14 +361,87 @@ function TestimonialsTab({ password }: { password: string }) {
 }
 
 /* ─── CONTENT TAB ─── */
-const CONTENT_KEYS = [
-  { key: 'hero_badge', label: 'Hero Badge Text', hint: 'e.g. Open to work · Freelance & full-time' },
-  { key: 'hero_tagline', label: 'Hero Tagline', hint: 'Short paragraph below the headline' },
-  { key: 'about_p1', label: 'About — Paragraph 1', hint: 'First paragraph of introduction', multiline: true },
-  { key: 'about_p2', label: 'About — Paragraph 2', hint: 'Second paragraph', multiline: true },
-  { key: 'contact_email', label: 'Contact Email', hint: 'hello@yourname.dev' },
-  { key: 'contact_location', label: 'Location', hint: 'City, State — Country' },
-  { key: 'contact_available', label: 'Availability Status', hint: 'e.g. Available for new work — May 2026' },
+type ContentSection = {
+  section: string;
+  keys: { key: string; label: string; hint: string; multiline?: boolean; isImage?: boolean }[];
+};
+
+const CONTENT_SECTIONS: ContentSection[] = [
+  {
+    section: 'Hero',
+    keys: [
+      { key: 'hero_badge', label: 'Badge Text', hint: 'e.g. Open to work · Freelance & full-time' },
+      { key: 'hero_tagline', label: 'Tagline Paragraph', hint: 'Short paragraph below the headline', multiline: true },
+      { key: 'hero_photo_url', label: 'Hero Photo URL (hover image)', hint: 'https://... — paste a direct image URL for your photo', isImage: true },
+      { key: 'hero_stat_1_num', label: 'Stat 1 — Number', hint: 'e.g. 20+' },
+      { key: 'hero_stat_1_label', label: 'Stat 1 — Label', hint: 'e.g. shipped projects' },
+      { key: 'hero_stat_2_num', label: 'Stat 2 — Number', hint: 'e.g. 3 yrs' },
+      { key: 'hero_stat_2_label', label: 'Stat 2 — Label', hint: 'e.g. design + code' },
+      { key: 'hero_stat_3_num', label: 'Stat 3 — Number', hint: 'e.g. 100%' },
+      { key: 'hero_stat_3_label', label: 'Stat 3 — Label', hint: 'e.g. AI-fluent' },
+      { key: 'hero_availability', label: 'Availability Badge (poster card)', hint: 'e.g. Currently · Freelancing' },
+      { key: 'hero_poster_year', label: 'Poster Year', hint: 'e.g. 2025 / 26' },
+      { key: 'hero_poster_location', label: 'Poster Location', hint: 'e.g. GUNTUR · IN' },
+      { key: 'hero_poster_coords', label: 'Poster Coordinates', hint: 'e.g. 16.51° N · 80.65° E' },
+      { key: 'hero_poster_est', label: 'Poster EST Year', hint: 'e.g. EST · 2022' },
+    ],
+  },
+  {
+    section: 'About',
+    keys: [
+      { key: 'about_heading', label: 'Section Heading (italic part)', hint: 'e.g. introduction.' },
+      { key: 'about_p1', label: 'Paragraph 1', hint: 'First paragraph of introduction', multiline: true },
+      { key: 'about_p2', label: 'Paragraph 2', hint: 'Second paragraph', multiline: true },
+      { key: 'about_companies', label: 'Worked With (comma-separated)', hint: 'ACM VVIT, Dharani Print, Spardha 25, VVITU, Freelance' },
+      { key: 'about_tools', label: 'Tools of Trade (comma-separated)', hint: 'Figma, Framer, React, Next.js, TypeScript, Three.js, GSAP, Tailwind' },
+    ],
+  },
+  {
+    section: 'Work',
+    keys: [
+      { key: 'work_heading', label: 'Section Heading', hint: "e.g. Things I've built recently." },
+      { key: 'work_github_url', label: 'GitHub Profile URL', hint: 'https://github.com/yourhandle' },
+    ],
+  },
+  {
+    section: 'Services',
+    keys: [
+      { key: 'services_heading', label: 'Heading (italic part)', hint: 'e.g. help.' },
+      { key: 'services_subtext', label: 'Subtext Paragraph', hint: 'Short description under the services heading', multiline: true },
+      { key: 'service_1_title', label: 'Service 1 — Title', hint: 'e.g. Product Design' },
+      { key: 'service_1_desc', label: 'Service 1 — Description', hint: 'Short description', multiline: true },
+      { key: 'service_2_title', label: 'Service 2 — Title', hint: 'e.g. Frontend Engineering' },
+      { key: 'service_2_desc', label: 'Service 2 — Description', hint: 'Short description', multiline: true },
+      { key: 'service_3_title', label: 'Service 3 — Title', hint: 'e.g. Brand & Identity' },
+      { key: 'service_3_desc', label: 'Service 3 — Description', hint: 'Short description', multiline: true },
+      { key: 'service_4_title', label: 'Service 4 — Title', hint: 'e.g. Interactive 3D' },
+      { key: 'service_4_desc', label: 'Service 4 — Description', hint: 'Short description', multiline: true },
+      { key: 'service_5_title', label: 'Service 5 — Title', hint: 'e.g. AI-Augmented Builds' },
+      { key: 'service_5_desc', label: 'Service 5 — Description', hint: 'Short description', multiline: true },
+    ],
+  },
+  {
+    section: 'Contact',
+    keys: [
+      { key: 'contact_heading', label: 'Heading (italic part)', hint: 'e.g. something good.' },
+      { key: 'contact_subtext', label: 'Subtext Paragraph', hint: 'Appears below the heading', multiline: true },
+      { key: 'contact_email', label: 'Email Address', hint: 'hello@yourname.dev' },
+      { key: 'contact_location', label: 'Location', hint: 'City, State — Country' },
+      { key: 'contact_available', label: 'Availability Status', hint: 'e.g. Available for new work — May 2026' },
+      { key: 'contact_github', label: 'GitHub URL', hint: 'https://github.com/yourhandle' },
+      { key: 'contact_linkedin', label: 'LinkedIn URL', hint: 'https://linkedin.com/in/yourhandle' },
+      { key: 'contact_twitter', label: 'Twitter / X URL', hint: 'https://twitter.com/yourhandle' },
+      { key: 'contact_dribbble', label: 'Dribbble URL', hint: 'https://dribbble.com/yourhandle' },
+    ],
+  },
+  {
+    section: 'Footer',
+    keys: [
+      { key: 'footer_tagline', label: 'Footer Tagline', hint: 'e.g. Freelancing from Guntur, India. Available worldwide.' },
+      { key: 'footer_copyright', label: 'Copyright Line', hint: 'e.g. © 2026 Subhash Mandalapu. All rights reserved.' },
+      { key: 'footer_built_by', label: 'Built By Line', hint: 'e.g. Designed & built · Guntur, IN' },
+    ],
+  },
 ];
 
 function ContentTab({ password }: { password: string }) {
@@ -376,6 +449,7 @@ function ContentTab({ password }: { password: string }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({ Hero: true });
 
   useEffect(() => {
     apiFetch('/api/content').then(setContent).catch(() => {}).finally(() => setLoading(false));
@@ -392,26 +466,59 @@ function ContentTab({ password }: { password: string }) {
     setSaving(null);
   };
 
+  const toggleSection = (section: string) => setOpenSections(s => ({ ...s, [section]: !s[section] }));
+
   if (loading) return <div style={{ padding: 40, color: '#6b6a63', fontFamily: 'Geist, Inter, sans-serif' }}>Loading…</div>;
 
   return (
     <div>
       <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 32, color: '#1a1a17', margin: '0 0 8px' }}>Site Content</h2>
-      <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#6b6a63', fontSize: 14, margin: '0 0 28px' }}>Edit the text content of your portfolio. Changes are saved immediately.</p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        {CONTENT_KEYS.map(({ key, label, hint, multiline }) => {
-          const val = content[key] ?? '';
+      <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#6b6a63', fontSize: 14, margin: '0 0 28px' }}>Every section of your portfolio is editable here. Click a section to expand it.</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {CONTENT_SECTIONS.map(({ section, keys }) => {
+          const isOpen = !!openSections[section];
           return (
-            <div key={key} style={{ ...glass, borderRadius: 16, padding: '20px 24px' }}>
-              <Label>{label}</Label>
-              <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#6b6a63', fontSize: 12, margin: '0 0 10px' }}>{hint}</p>
-              <ContentField
-                value={val}
-                multiline={multiline}
-                onSave={(v) => save(key, v)}
-                saving={saving === key}
-                saved={saved === key}
-              />
+            <div key={section} style={{ ...glass, borderRadius: 18, overflow: 'hidden' }}>
+              <button
+                onClick={() => toggleSection(section)}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '18px 24px', background: 'transparent', border: 'none', cursor: 'pointer',
+                  fontFamily: "'Instrument Serif', serif", fontSize: 22, color: '#1a1a17',
+                  borderBottom: isOpen ? '1px solid rgba(0,0,0,0.08)' : 'none',
+                }}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#6b6a63', background: 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '3px 8px' }}>{keys.length} fields</span>
+                  {section}
+                </span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b6a63" strokeWidth="2" strokeLinecap="round" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 250ms ease', flexShrink: 0 }}><path d="M6 9l6 6 6-6" /></svg>
+              </button>
+              {isOpen && (
+                <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  {keys.map(({ key, label, hint, multiline, isImage }) => {
+                    const val = content[key] ?? '';
+                    return (
+                      <div key={key}>
+                        <Label>{label}</Label>
+                        <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#6b6a63', fontSize: 12, margin: '0 0 8px' }}>{hint}</p>
+                        {isImage && val && (
+                          <div style={{ width: '100%', height: 120, borderRadius: 10, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.1)', marginBottom: 8 }}>
+                            <img src={val} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                          </div>
+                        )}
+                        <ContentField
+                          value={val}
+                          multiline={multiline}
+                          onSave={(v) => save(key, v)}
+                          saving={saving === key}
+                          saved={saved === key}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           );
         })}

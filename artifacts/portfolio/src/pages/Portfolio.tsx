@@ -68,6 +68,12 @@ interface CmsTestimonial {
 }
 type ContentMap = Record<string, string>;
 
+/* ─── CMS HELPER ─── */
+function cms(content: ContentMap | undefined, key: string, fallback: string): string {
+  if (!content) return fallback;
+  return content[key]?.trim() || fallback;
+}
+
 /* ─── DEFAULT DATA (shown before API loads) ─── */
 const DEFAULT_PROJECTS: CmsProject[] = [
   { id: 0, title: 'Spardha 2025', description: 'Tech Fest · Website', imageUrl: 'https://picsum.photos/seed/spardha/800/600', siteUrl: 'https://spardha2k25.vercel.app', category: 'Tech Fest · Website', displayOrder: 0 },
@@ -83,8 +89,8 @@ const DEFAULT_TESTIMONIALS: CmsTestimonial[] = [
   { id: 2, quote: 'Worked with a lot of designers. Few of them can also build it. Subhash can. And the result feels finished.', name: 'Krish M.', role: 'Tech Lead, ACM', displayOrder: 2 },
 ];
 
-/* ─── DATA ─── */
-const services = [
+/* ─── DEFAULT SERVICES ─── */
+const DEFAULT_SERVICES = [
   { num: '01', title: 'Product Design', desc: 'End-to-end interface design — research, information architecture, and pixel-perfect polish.' },
   { num: '02', title: 'Frontend Engineering', desc: 'Production-grade React, TypeScript, accessibility, performance — code that ships and holds up.' },
   { num: '03', title: 'Brand & Identity', desc: 'Visual systems, typography, and motion that hold up consistently across every surface.' },
@@ -315,8 +321,14 @@ function SunStar({ size = 64 }: { size?: number }) {
 }
 
 /* ─── HERO POSTER CARD ─── */
-function HeroPosterCard() {
+function HeroPosterCard({ content }: { content: ContentMap }) {
   const [hovered, setHovered] = useState(false);
+  const photoUrl = cms(content, 'hero_photo_url', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&q=80');
+  const posterYear = cms(content, 'hero_poster_year', '2025 / 26');
+  const posterLocation = cms(content, 'hero_poster_location', 'GUNTUR · IN');
+  const posterCoords = cms(content, 'hero_poster_coords', '16.51° N · 80.65° E');
+  const posterEst = cms(content, 'hero_poster_est', 'EST · 2022');
+  const heroAvailability = cms(content, 'hero_availability', 'Currently · Freelancing');
   return (
     <div
       className="hero-card-wrap"
@@ -331,7 +343,7 @@ function HeroPosterCard() {
           className="photo-hover-layer"
           style={{
             opacity: hovered ? 1 : 0,
-            backgroundImage: `url(https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&q=80)`,
+            backgroundImage: `url(${photoUrl})`,
           }}
         >
           <div className="photo-hover-overlay" />
@@ -345,10 +357,10 @@ function HeroPosterCard() {
         }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
             <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(26,26,23,0.75)', lineHeight: 1.7 }}>
-              PORTFOLIO ·<br />2025 / 26
+              PORTFOLIO ·<br />{posterYear}
             </div>
             <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(26,26,23,0.75)', textAlign: 'right', lineHeight: 1.7 }}>
-              GUNTUR · IN<br />16.51° N · 80.65° E
+              {posterLocation}<br />{posterCoords}
             </div>
           </div>
           <div style={{ textAlign: 'center' }}>
@@ -364,7 +376,7 @@ function HeroPosterCard() {
               DESIGN ·<br />DEVELOPMENT
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(26,26,23,0.75)' }}>
-              <Asterisk size={12} color="rgba(26,26,23,0.6)" /> EST · 2022
+              <Asterisk size={12} color="rgba(26,26,23,0.6)" /> {posterEst}
             </div>
           </div>
         </div>
@@ -381,7 +393,7 @@ function HeroPosterCard() {
         zIndex: 10,
       }}>
         <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#16a34a', boxShadow: '0 0 0 3px rgba(22,163,74,0.22)', flexShrink: 0, animation: 'portPulse 2.2s ease-in-out infinite' }} />
-        Currently · Freelancing
+        {heroAvailability}
       </div>
       {/* Asterisk ornament */}
       <div style={{ position: 'absolute', top: -20, right: -12, zIndex: 10 }}>
@@ -442,7 +454,15 @@ function Nav() {
 }
 
 /* ─── HERO ─── */
-function Hero() {
+function Hero({ content }: { content: ContentMap }) {
+  const badge = cms(content, 'hero_badge', 'Open to work · Freelance & full-time');
+  const tagline = cms(content, 'hero_tagline', 'Multidisciplinary designer & developer crafting digital experiences that blend cutting-edge tech with elegant design. Currently based in Guntur, India — available worldwide.');
+  const stat1num = cms(content, 'hero_stat_1_num', '20+');
+  const stat1label = cms(content, 'hero_stat_1_label', 'shipped projects');
+  const stat2num = cms(content, 'hero_stat_2_num', '3 yrs');
+  const stat2label = cms(content, 'hero_stat_2_label', 'design + code');
+  const stat3num = cms(content, 'hero_stat_3_num', '100%');
+  const stat3label = cms(content, 'hero_stat_3_label', 'AI-fluent');
   return (
     <section id="top" style={{ position: 'relative', paddingTop: 120, paddingBottom: 80 }}>
       <div className="port-frame">
@@ -464,7 +484,7 @@ function Hero() {
               boxShadow: '0 4px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.95)',
             }}>
               <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#16a34a', boxShadow: '0 0 0 4px rgba(22,163,74,0.18)', animation: 'portPulse 2.2s ease-in-out infinite', flexShrink: 0 }} />
-              Open to work · Freelance & full-time
+              {badge}
             </motion.div>
 
             <motion.h1 variants={fadeUp} transition={T} style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 0.95, fontSize: 'clamp(52px, 7vw, 110px)', color: '#1a1a17', margin: 0 }}>
@@ -478,7 +498,7 @@ function Hero() {
             </motion.h1>
 
             <motion.p variants={fadeUp} transition={T} style={{ fontFamily: 'Geist, Inter, sans-serif', marginTop: 28, color: '#2c2a25', fontSize: 17, lineHeight: 1.65, maxWidth: 500 }}>
-              Multidisciplinary designer & developer crafting digital experiences that blend cutting-edge tech with elegant design. Currently based in Guntur, India — available worldwide.
+              {tagline}
             </motion.p>
 
             <motion.div variants={fadeUp} transition={T} style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 32 }}>
@@ -490,7 +510,7 @@ function Hero() {
             </motion.div>
 
             <motion.div variants={fadeUp} transition={T} style={{ display: 'flex', flexWrap: 'wrap', gap: 32, marginTop: 44 }}>
-              {[['20+', 'shipped projects'], ['3 yrs', 'design + code'], ['100%', 'AI-fluent']].map(([num, label]) => (
+              {[[stat1num, stat1label], [stat2num, stat2label], [stat3num, stat3label]].map(([num, label]) => (
                 <div key={label}>
                   <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 40, color: '#1a1a17', lineHeight: 1 }}>{num}</div>
                   <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#6b6a63', marginTop: 4 }}>{label}</div>
@@ -506,7 +526,7 @@ function Hero() {
             transition={{ ...T, delay: 0.35 }}
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 0' }}
           >
-            <HeroPosterCard />
+            <HeroPosterCard content={content} />
           </motion.div>
         </div>
 
@@ -534,12 +554,15 @@ function Hero() {
 }
 
 /* ─── ABOUT ─── */
-function About() {
-  const tools = ['Figma', 'Framer', 'React', 'Next.js', 'TypeScript', 'Three.js', 'GSAP', 'Tailwind'];
-  const companies = ['ACM VVIT', 'Dharani Print', 'Spardha 25', 'VVITU', 'Freelance'];
+function About({ content }: { content: ContentMap }) {
+  const rawTools = cms(content, 'about_tools', 'Figma,Framer,React,Next.js,TypeScript,Three.js,GSAP,Tailwind');
+  const rawCompanies = cms(content, 'about_companies', 'ACM VVIT,Dharani Print,Spardha 25,VVITU,Freelance');
+  const tools = rawTools.split(',').map(s => s.trim()).filter(Boolean);
+  const companies = rawCompanies.split(',').map(s => s.trim()).filter(Boolean);
 
-  const aboutText1 = "I'm a multidisciplinary designer and developer working on the intersection of aesthetics and engineering. I care about details — type, motion, the feel of a click — and the systems underneath that make them hold up at scale.";
-  const aboutText2 = "I work across product design, front-end engineering, brand systems and interactive 3D. I've shipped 20+ projects spanning consumer applications, festival sites, productivity tools and small games.";
+  const aboutText1 = cms(content, 'about_p1', "I'm a multidisciplinary designer and developer working on the intersection of aesthetics and engineering. I care about details — type, motion, the feel of a click — and the systems underneath that make them hold up at scale.");
+  const aboutText2 = cms(content, 'about_p2', "I work across product design, front-end engineering, brand systems and interactive 3D. I've shipped 20+ projects spanning consumer applications, festival sites, productivity tools and small games.");
+  const aboutHeading = cms(content, 'about_heading', 'introduction.');
 
   return (
     <section id="about" style={{ padding: '96px 0' }}>
@@ -549,7 +572,7 @@ function About() {
           <div style={{ position: 'sticky', top: 120 }}>
             <div className="port-eyebrow" style={{ marginBottom: 20 }}>— About</div>
             <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(40px, 5vw, 64px)', color: '#1a1a17', lineHeight: 0.95, margin: 0 }}>
-              A short<br /><span style={{ fontStyle: 'italic', color: '#c64f17' }}>introduction.</span>
+              A short<br /><span style={{ fontStyle: 'italic', color: '#c64f17' }}>{aboutHeading}</span>
             </h2>
           </div>
         </Reveal>
@@ -583,13 +606,21 @@ function About() {
 }
 
 /* ─── WORK ─── */
-function Work({ projects, onProjectClick }: { projects: CmsProject[]; onProjectClick: (p: CmsProject) => void }) {
+function Work({ projects, onProjectClick, content }: { projects: CmsProject[]; onProjectClick: (p: CmsProject) => void; content: ContentMap }) {
+  const workHeading = cms(content, 'work_heading', "Things I've built recently.");
+  const workGithub = cms(content, 'work_github_url', 'https://github.com/subhash-04');
+
   const menuItems: InfiniteMenuItem[] = projects.map(p => ({
     image: p.imageUrl,
     link: p.siteUrl,
     title: p.title,
     description: p.category,
   }));
+
+  const handleMenuClick = (item: InfiniteMenuItem) => {
+    const project = projects.find(p => p.title === item.title);
+    if (project) onProjectClick(project);
+  };
 
   return (
     <section id="work" style={{ padding: '96px 0', background: '#ebe6db' }}>
@@ -598,11 +629,11 @@ function Work({ projects, onProjectClick }: { projects: CmsProject[]; onProjectC
           <motion.div variants={fadeUp} transition={T}>
             <div className="port-eyebrow" style={{ marginBottom: 16 }}>— Selected Work</div>
             <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(40px, 6vw, 80px)', color: '#1a1a17', lineHeight: 0.95, margin: 0 }}>
-              Things I've <span style={{ fontStyle: 'italic', color: '#c64f17' }}>built</span><br />recently.
+              {workHeading.split('\n').map((line, i) => <span key={i}>{line}{i < workHeading.split('\n').length - 1 && <br />}</span>)}
             </h2>
           </motion.div>
           <motion.div variants={fadeUp} transition={{ ...T, delay: 0.15 }}>
-            <a href="https://github.com/subhash-04" target="_blank" rel="noreferrer" className="port-btn-ghost" style={{ fontSize: 14 }}>
+            <a href={workGithub} target="_blank" rel="noreferrer" className="port-btn-ghost" style={{ fontSize: 14 }}>
               View all on GitHub
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M7 17L17 7" /><path d="M9 7h8v8" /></svg>
             </a>
@@ -611,13 +642,13 @@ function Work({ projects, onProjectClick }: { projects: CmsProject[]; onProjectC
         <Reveal variant={scaleUp} delay={0.1}>
           <div style={{ height: 600, borderRadius: 28, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 24px 80px rgba(0,0,0,0.12)' }}>
             <ErrorBoundary fallback={<ProjectsFallback projects={projects} onProjectClick={onProjectClick} />}>
-              <InfiniteMenu items={menuItems} scale={1.0} />
+              <InfiniteMenu items={menuItems} scale={1.0} onItemClick={handleMenuClick} />
             </ErrorBoundary>
           </div>
         </Reveal>
         <Reveal variant={fadeIn} delay={0.2}>
           <p style={{ fontFamily: "'Geist Mono', monospace", fontSize: 12, color: '#6b6a63', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: 20, textAlign: 'center' }}>
-            Hover to explore · Click "View Project" to open
+            Hover to explore · Click arrow to view project details
           </p>
         </Reveal>
       </div>
@@ -667,7 +698,7 @@ function useScrollReveal(ref: React.RefObject<HTMLElement | null>, threshold = 0
 }
 
 /* ─── SERVICE ROW (glass card) ─── */
-function ServiceRow({ s, delay }: { s: typeof services[0]; delay: number }) {
+function ServiceRow({ s, delay }: { s: typeof DEFAULT_SERVICES[0]; delay: number }) {
   const rowRef = useRef<HTMLDivElement>(null);
   const visible = useScrollReveal(rowRef as React.RefObject<HTMLElement>, 0.2);
   const [hovered, setHovered] = useState(false);
@@ -749,7 +780,15 @@ function ServiceRow({ s, delay }: { s: typeof services[0]; delay: number }) {
 }
 
 /* ─── SERVICES ─── */
-function Services() {
+function Services({ content }: { content: ContentMap }) {
+  const servicesHeading = cms(content, 'services_heading', 'help.');
+  const servicesSubtext = cms(content, 'services_subtext', 'Full ownership from problem to shipped product — or an extra pair of expert hands on a focused engagement.');
+  const services = DEFAULT_SERVICES.map((s, i) => ({
+    ...s,
+    title: cms(content, `service_${i + 1}_title`, s.title),
+    desc: cms(content, `service_${i + 1}_desc`, s.desc),
+  }));
+
   return (
     <section id="services" style={{ padding: '96px 0' }}>
       <div className="port-frame">
@@ -759,10 +798,10 @@ function Services() {
             <div style={{ position: 'sticky', top: 120 }}>
               <div className="port-eyebrow" style={{ marginBottom: 16 }}>— Services</div>
               <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(36px, 4.5vw, 64px)', color: '#1a1a17', lineHeight: 0.95, margin: '0 0 20px' }}>
-                How I can<br /><span style={{ fontStyle: 'italic', color: '#c64f17' }}>help.</span>
+                How I can<br /><span style={{ fontStyle: 'italic', color: '#c64f17' }}>{servicesHeading}</span>
               </h2>
               <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#6b6a63', fontSize: 15, lineHeight: 1.7, margin: 0 }}>
-                Full ownership from problem to shipped product — or an extra pair of expert hands on a focused engagement.
+                {servicesSubtext}
               </p>
             </div>
           </Reveal>
@@ -891,7 +930,7 @@ function ContactForm() {
 }
 
 /* ─── CONTACT CTA ─── */
-function Contact() {
+function Contact({ content }: { content: ContentMap }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -929,6 +968,16 @@ function Contact() {
     return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
   }, []);
 
+  const contactHeading = cms(content, 'contact_heading', 'something good.');
+  const contactSubtext = cms(content, 'contact_subtext', 'Open for freelance, partnerships, and the occasional weird experiment. I usually reply within 24 hours.');
+  const contactEmail = cms(content, 'contact_email', 'hello@subhash.dev');
+  const contactLocation = cms(content, 'contact_location', 'Guntur, AP — IN');
+  const contactAvailable = cms(content, 'contact_available', 'Available for new work — May 2026');
+  const contactGithub = cms(content, 'contact_github', 'https://github.com/subhash-04');
+  const contactLinkedin = cms(content, 'contact_linkedin', '#');
+  const contactTwitter = cms(content, 'contact_twitter', '#');
+  const contactDribbble = cms(content, 'contact_dribbble', '#');
+
   return (
     <section id="contact" style={{ padding: '96px 0', position: 'relative', overflow: 'hidden' }}>
       <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />
@@ -938,35 +987,35 @@ function Contact() {
             <Asterisk size={28} />
           </motion.div>
           <motion.h2 variants={fadeUp} transition={T} style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(52px, 9vw, 128px)', color: '#1a1a17', lineHeight: 0.9, marginTop: 16, marginBottom: 24 }}>
-            Let's make<br /><span style={{ fontStyle: 'italic', color: '#c64f17' }}>something good.</span>
+            Let's make<br /><span style={{ fontStyle: 'italic', color: '#c64f17' }}>{contactHeading}</span>
           </motion.h2>
           <motion.p variants={fadeUp} transition={T} style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#2c2a25', fontSize: 18, maxWidth: 520, margin: '0 auto' }}>
-            Open for freelance, partnerships, and the occasional weird experiment. I usually reply within 24 hours.
+            {contactSubtext}
           </motion.p>
         </Stagger>
         <div style={{ display: 'grid', gridTemplateColumns: '5fr 7fr', gap: 48 }}>
           <Reveal variant={slideL} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <div>
               <div className="port-eyebrow" style={{ marginBottom: 6 }}>— Email</div>
-              <a href="mailto:hello@subhash.dev" style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(20px, 3vw, 36px)', color: '#1a1a17', textDecoration: 'none', transition: 'color 200ms ease' }}
+              <a href={`mailto:${contactEmail}`} style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(20px, 3vw, 36px)', color: '#1a1a17', textDecoration: 'none', transition: 'color 200ms ease' }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#c64f17')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#1a1a17')}>hello@subhash.dev</a>
+                onMouseLeave={e => (e.currentTarget.style.color = '#1a1a17')}>{contactEmail}</a>
             </div>
             <div>
               <div className="port-eyebrow" style={{ marginBottom: 6 }}>— Based in</div>
-              <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: '#1a1a17' }}>Guntur, AP — IN</div>
+              <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: '#1a1a17' }}>{contactLocation}</div>
             </div>
             <div>
               <div className="port-eyebrow" style={{ marginBottom: 10 }}>— Find me on</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {[{ l: 'GitHub', href: 'https://github.com/subhash-04' }, { l: 'LinkedIn', href: '#' }, { l: 'Twitter', href: '#' }, { l: 'Dribbble', href: '#' }].map(s => (
+                {[{ l: 'GitHub', href: contactGithub }, { l: 'LinkedIn', href: contactLinkedin }, { l: 'Twitter', href: contactTwitter }, { l: 'Dribbble', href: contactDribbble }].map(s => (
                   <a key={s.l} href={s.href} target="_blank" rel="noreferrer" className="port-tag port-tag-hover">{s.l} →</a>
                 ))}
               </div>
             </div>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: '#ebe6db', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 999, padding: '8px 14px', fontSize: 13, color: '#2c2a25', width: 'fit-content' }}>
               <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#16a34a', boxShadow: '0 0 0 4px rgba(22,163,74,0.18)', animation: 'portPulse 2.2s ease-in-out infinite' }} />
-              Available for new work — May 2026
+              {contactAvailable}
             </div>
           </Reveal>
           <Reveal variant={slideR} delay={0.1} style={{
@@ -987,19 +1036,22 @@ function Contact() {
 }
 
 /* ─── FOOTER ─── */
-function Footer() {
+function Footer({ content }: { content: ContentMap }) {
+  const footerTagline = cms(content, 'footer_tagline', 'Freelancing from Guntur, India. Available worldwide.');
+  const footerEmail = cms(content, 'contact_email', 'hello@subhash.dev');
+
   return (
     <footer style={{ background: '#1a1a17', color: '#f4f1ea', paddingTop: 80, paddingBottom: 40 }}>
       <div className="port-frame">
         <Stagger style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginBottom: 64 }} gap={0.12}>
           <motion.div variants={slideL} transition={T}>
             <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(244,241,234,0.5)', marginBottom: 12 }}>— Currently</div>
-            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: '#f4f1ea' }}>Freelancing from Guntur, India. Available worldwide.</div>
+            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: '#f4f1ea' }}>{footerTagline}</div>
           </motion.div>
           <motion.div variants={slideR} transition={T}>
             <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(244,241,234,0.5)', marginBottom: 12 }}>— Sitemap</div>
             <ul style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 24px', listStyle: 'none', margin: 0, padding: 0 }}>
-              {[...navItems, { label: 'Email', href: 'mailto:hello@subhash.dev' }].map(it => (
+              {[...navItems, { label: 'Email', href: `mailto:${footerEmail}` }].map(it => (
                 <li key={it.label}><a href={it.href} style={{ fontFamily: 'Geist, Inter, sans-serif', fontSize: 15, color: 'rgba(244,241,234,0.7)', textDecoration: 'none', transition: 'color 200ms ease' }}
                   onMouseEnter={e => (e.currentTarget.style.color = '#f4f1ea')}
                   onMouseLeave={e => (e.currentTarget.style.color = 'rgba(244,241,234,0.7)')}
@@ -1015,8 +1067,8 @@ function Footer() {
         </Reveal>
         <div style={{ height: 1, background: 'rgba(244,241,234,0.18)', marginTop: 40 }} />
         <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-          <div style={{ fontFamily: 'Geist, Inter, sans-serif', fontSize: 12, color: 'rgba(244,241,234,0.5)' }}>© 2026 Subhash Mandalapu. All rights reserved.</div>
-          <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(244,241,234,0.5)' }}>Designed & built · Guntur, IN</div>
+          <div style={{ fontFamily: 'Geist, Inter, sans-serif', fontSize: 12, color: 'rgba(244,241,234,0.5)' }}>{cms(content, 'footer_copyright', '© 2026 Subhash Mandalapu. All rights reserved.')}</div>
+          <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(244,241,234,0.5)' }}>{cms(content, 'footer_built_by', 'Designed & built · Guntur, IN')}</div>
         </div>
       </div>
     </footer>
@@ -1027,6 +1079,7 @@ function Footer() {
 export default function Portfolio() {
   const [projects, setProjects] = useState<CmsProject[]>(DEFAULT_PROJECTS);
   const [testimonials, setTestimonials] = useState<CmsTestimonial[]>(DEFAULT_TESTIMONIALS);
+  const [content, setContent] = useState<ContentMap>({});
   const [modalProject, setModalProject] = useState<CmsProject | null>(null);
 
   useEffect(() => {
@@ -1038,19 +1091,23 @@ export default function Portfolio() {
       .then(r => r.json())
       .then((data: CmsTestimonial[]) => { if (Array.isArray(data) && data.length > 0) setTestimonials(data); })
       .catch(() => {});
+    fetch('/api/content')
+      .then(r => r.json())
+      .then((data: ContentMap) => { if (data && typeof data === 'object') setContent(data); })
+      .catch(() => {});
   }, []);
 
   return (
     <div style={{ background: '#f4f1ea', color: '#1a1a17', minHeight: '100vh', overflowX: 'hidden' }}>
       <Nav />
-      <Hero />
+      <Hero content={content} />
       <CompaniesStrip />
-      <About />
-      <Work projects={projects} onProjectClick={setModalProject} />
-      <Services />
+      <About content={content} />
+      <Work projects={projects} onProjectClick={setModalProject} content={content} />
+      <Services content={content} />
       <Testimonials testimonials={testimonials} />
-      <Contact />
-      <Footer />
+      <Contact content={content} />
+      <Footer content={content} />
       {modalProject && <ProjectModal project={modalProject} onClose={() => setModalProject(null)} />}
     </div>
   );
