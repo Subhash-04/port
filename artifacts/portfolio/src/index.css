@@ -217,6 +217,174 @@ body::before {
 /* ─── CANVAS cover full parent ─── */
 canvas { display: block; }
 
+/* ─── HERO GRID ─── */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+}
+
+/* ─── HERO IDENTITY CARD ─── */
+.hero-id-card {
+  position: relative;
+  width: 340px;
+  height: 460px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #d4c5a9;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform 500ms cubic-bezier(.2,.7,.2,1), box-shadow 500ms ease;
+  flex-shrink: 0;
+}
+.hero-id-card:hover {
+  transform: translateY(-8px) rotate(-1deg);
+  box-shadow: 0 48px 100px rgba(0,0,0,0.2), 0 16px 32px rgba(0,0,0,0.1);
+}
+
+/* Diagonal stripe texture */
+.hero-id-stripes {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 12px,
+    rgba(255,255,255,0.13) 12px,
+    rgba(255,255,255,0.13) 14px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Content layer */
+.hero-id-content {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 22px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Top meta row */
+.hero-id-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.hero-id-meta-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.hero-id-meta {
+  font-family: 'Geist Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(26,26,23,0.55);
+  line-height: 1.6;
+}
+
+/* Asterisk ornament top-right */
+.hero-id-star {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  z-index: 3;
+}
+
+/* Name */
+.hero-id-name-wrap {
+  text-align: center;
+  padding: 0 16px;
+}
+.hero-id-name-first {
+  font-family: 'Instrument Serif', serif;
+  font-size: 54px;
+  color: #1a1a17;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.hero-id-name-last {
+  font-family: 'Instrument Serif', serif;
+  font-size: 44px;
+  color: #c64f17;
+  font-style: italic;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+/* Bottom meta row */
+.hero-id-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+/* Freelancing badge */
+.hero-id-badge {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #1a1a17;
+  color: #f4f1ea;
+  font-family: 'Geist Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border-radius: 999px;
+  white-space: nowrap;
+  z-index: 3;
+}
+.hero-id-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22,163,74,0.25);
+  animation: portPulse 2.2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* Photo hover layer */
+.hero-id-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background-size: cover;
+  background-position: center top;
+  transition: opacity 500ms cubic-bezier(.4,0,.2,1);
+  border-radius: inherit;
+}
+.hero-id-photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(26,26,23,0.7) 0%, rgba(26,26,23,0.1) 50%, transparent 100%);
+  border-radius: inherit;
+}
+.hero-id-photo-tag {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
 /* ─── CUSTOM SCROLLBAR ─── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--paper); }
