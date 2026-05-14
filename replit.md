@@ -51,6 +51,15 @@ A high-fidelity personal portfolio site for designer-developer Subhash Mandalapu
 - Fonts: Instrument Serif (display/serif), Geist (body/sans), Geist Mono (mono/code)
 - Warm, editorial, high-craft aesthetic. Serif display type with mono accents.
 
+## Admin Panel
+
+- Visit `/admin` on the portfolio URL to access the admin panel
+- Admin password: stored in `ADMIN_PASSWORD` env var (default: `subhash2026`)
+- Admin panel lets you manage projects, testimonials, and site content via a glassy CRUD dashboard
+- Portfolio.tsx fetches projects + testimonials from the API on load, falling back to hardcoded defaults if the API is unreachable
+- `ProjectModal` component opens when clicking "View Project" on any project card
+- All admin write operations require `X-Admin-Password` header
+
 ## Gotchas
 
 - WebGL (Three.js / InfiniteMenu) does NOT work in the Replit preview sandbox — only in deployed production. Fallbacks are always shown in the preview.

@@ -58,16 +58,32 @@ function Reveal({ children, variant = fadeUp, delay = 0, style, className }: {
   );
 }
 
-/* ─── DATA ─── */
-const projects: InfiniteMenuItem[] = [
-  { image: 'https://picsum.photos/seed/spardha/600/600', link: 'https://spardha2k25.vercel.app', title: 'Spardha 2025', description: 'Tech Fest · Website' },
-  { image: 'https://picsum.photos/seed/dharani/600/600', link: 'https://dharani-printing-services-subhashmandalap.replit.app/', title: 'Dharani Printing', description: 'Full-Stack · SaaS' },
-  { image: 'https://picsum.photos/seed/acmvvit/600/600', link: 'https://subhash-04.github.io/acm_vvit_landingpage-by-Subhash/', title: 'ACM VVIT', description: 'Interactive · Landing' },
-  { image: 'https://picsum.photos/seed/qrgen/600/600', link: 'https://earnest-semifreddo-abdb5c.netlify.app/', title: 'QR Generator', description: 'Frontend · Tool' },
-  { image: 'https://picsum.photos/seed/roborift/600/600', link: 'https://subhash-04.github.io/Robo-Rift/', title: 'Robo Rift', description: 'Interactive · Game' },
-  { image: 'https://picsum.photos/seed/echotrap/600/600', link: 'https://subhash-04.github.io/Echo-Trap/', title: 'Echo Trap', description: 'Interactive · Game' },
+/* ─── API TYPES ─── */
+interface CmsProject {
+  id: number; title: string; description: string;
+  imageUrl: string; siteUrl: string; category: string; displayOrder: number;
+}
+interface CmsTestimonial {
+  id: number; name: string; role: string; quote: string; displayOrder: number;
+}
+type ContentMap = Record<string, string>;
+
+/* ─── DEFAULT DATA (shown before API loads) ─── */
+const DEFAULT_PROJECTS: CmsProject[] = [
+  { id: 0, title: 'Spardha 2025', description: 'Tech Fest · Website', imageUrl: 'https://picsum.photos/seed/spardha/800/600', siteUrl: 'https://spardha2k25.vercel.app', category: 'Tech Fest · Website', displayOrder: 0 },
+  { id: 1, title: 'Dharani Printing', description: 'Full-Stack · SaaS', imageUrl: 'https://picsum.photos/seed/dharani/800/600', siteUrl: 'https://dharani-printing-services-subhashmandalap.replit.app/', category: 'Full-Stack · SaaS', displayOrder: 1 },
+  { id: 2, title: 'ACM VVIT', description: 'Interactive · Landing', imageUrl: 'https://picsum.photos/seed/acmvvit/800/600', siteUrl: 'https://subhash-04.github.io/acm_vvit_landingpage-by-Subhash/', category: 'Interactive · Landing', displayOrder: 2 },
+  { id: 3, title: 'QR Generator', description: 'Frontend · Tool', imageUrl: 'https://picsum.photos/seed/qrgen/800/600', siteUrl: 'https://earnest-semifreddo-abdb5c.netlify.app/', category: 'Frontend · Tool', displayOrder: 3 },
+  { id: 4, title: 'Robo Rift', description: 'Interactive · Game', imageUrl: 'https://picsum.photos/seed/roborift/800/600', siteUrl: 'https://subhash-04.github.io/Robo-Rift/', category: 'Interactive · Game', displayOrder: 4 },
+  { id: 5, title: 'Echo Trap', description: 'Interactive · Game', imageUrl: 'https://picsum.photos/seed/echotrap/800/600', siteUrl: 'https://subhash-04.github.io/Echo-Trap/', category: 'Interactive · Game', displayOrder: 5 },
+];
+const DEFAULT_TESTIMONIALS: CmsTestimonial[] = [
+  { id: 0, quote: 'Subhash ships the kind of work that just looks 10× considered. Calm, fast, and unbothered by hard requirements.', name: 'Aditya R.', role: 'Engineering Lead', displayOrder: 0 },
+  { id: 1, quote: 'Rare combination of taste and craft. The site landed exactly the way the brief was written — and faster than expected.', name: 'Priya N.', role: 'Founder, Dharani', displayOrder: 1 },
+  { id: 2, quote: 'Worked with a lot of designers. Few of them can also build it. Subhash can. And the result feels finished.', name: 'Krish M.', role: 'Tech Lead, ACM', displayOrder: 2 },
 ];
 
+/* ─── DATA ─── */
 const services = [
   { num: '01', title: 'Product Design', desc: 'End-to-end interface design — research, information architecture, and pixel-perfect polish.' },
   { num: '02', title: 'Frontend Engineering', desc: 'Production-grade React, TypeScript, accessibility, performance — code that ships and holds up.' },
@@ -76,11 +92,6 @@ const services = [
   { num: '05', title: 'AI-Augmented Builds', desc: 'Modern AI tooling woven into the workflow — shipping faster without losing an ounce of craft.' },
 ];
 
-const testimonials = [
-  { quote: 'Subhash ships the kind of work that just looks 10× considered. Calm, fast, and unbothered by hard requirements.', name: 'Aditya R.', role: 'Engineering Lead' },
-  { quote: 'Rare combination of taste and craft. The site landed exactly the way the brief was written — and faster than expected.', name: 'Priya N.', role: 'Founder, Dharani' },
-  { quote: 'Worked with a lot of designers. Few of them can also build it. Subhash can. And the result feels finished.', name: 'Krish M.', role: 'Tech Lead, ACM' },
-];
 
 const navItems = [
   { label: 'Work', href: '#work' },
@@ -109,23 +120,173 @@ function ToolsFallback() {
   );
 }
 
-function ProjectsFallback() {
+/* ─── PROJECT MODAL ─── */
+function ProjectModal({ project, onClose }: { project: CmsProject; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
+  }, [onClose]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.22 }}
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 9999,
+        background: 'rgba(10,9,7,0.72)',
+        backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
+      }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 40, scale: 0.96 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: 'rgba(244,241,234,0.96)',
+          backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)',
+          borderRadius: 28, overflow: 'hidden',
+          border: '1px solid rgba(255,255,255,0.9)',
+          boxShadow: '0 32px 80px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,1)',
+          maxWidth: 860, width: '100%',
+          display: 'grid', gridTemplateColumns: '1fr 1fr',
+          maxHeight: '90vh',
+        }}
+      >
+        {/* Left: image */}
+        <div style={{ position: 'relative', minHeight: 320, overflow: 'hidden', background: '#1a1a17' }}>
+          {project.imageUrl && (
+            <img
+              src={project.imageUrl}
+              alt={project.title}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+          )}
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(26,26,23,0.2) 0%, transparent 60%)' }} />
+          <div style={{
+            position: 'absolute', top: 20, left: 20,
+            background: 'rgba(26,26,23,0.72)', backdropFilter: 'blur(12px)',
+            borderRadius: 999, padding: '5px 14px',
+            fontFamily: "'Geist Mono', monospace", fontSize: 10, letterSpacing: '0.15em',
+            textTransform: 'uppercase', color: '#f0a36c',
+          }}>{project.category}</div>
+        </div>
+
+        {/* Right: content */}
+        <div style={{ padding: '36px 36px 36px 36px', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 20 }}>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(28px, 3.5vw, 42px)', color: '#1a1a17', lineHeight: 0.95, margin: 0 }}>
+              {project.title}
+            </h2>
+            <button
+              onClick={onClose}
+              style={{
+                flexShrink: 0, width: 36, height: 36, borderRadius: '50%',
+                background: 'rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.1)',
+                display: 'grid', placeItems: 'center', cursor: 'pointer',
+                color: '#6b6a63', transition: 'background 200ms',
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {project.description && (
+            <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#2c2a25', fontSize: 15, lineHeight: 1.75, margin: '0 0 28px', flex: 1 }}>
+              {project.description}
+            </p>
+          )}
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 'auto' }}>
+            {project.siteUrl && (
+              <a
+                href={project.siteUrl}
+                target="_blank" rel="noreferrer"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  background: '#1a1a17', color: '#f4f1ea', borderRadius: 12,
+                  padding: '13px 24px', fontFamily: 'Geist, Inter, sans-serif',
+                  fontSize: 14, fontWeight: 600, textDecoration: 'none',
+                  transition: 'background 200ms',
+                }}
+              >
+                Visit Site
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg>
+              </a>
+            )}
+            <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, color: '#6b6a63', letterSpacing: '0.1em', textAlign: 'center' }}>
+              Press ESC to close
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function ProjectsFallback({ projects, onProjectClick }: { projects: CmsProject[]; onProjectClick: (p: CmsProject) => void }) {
+  const [hovered, setHovered] = useState<number | null>(null);
   return (
     <div style={{ width: '100%', height: '100%', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', overflow: 'hidden' }}>
       {projects.map((p, i) => (
-        <a key={p.title} href={p.link} target="_blank" rel="noreferrer" style={{
-          position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
-          padding: 24, textDecoration: 'none', overflow: 'hidden',
-          backgroundImage: `url(${p.image})`, backgroundSize: 'cover', backgroundPosition: 'center', minHeight: 200,
-          borderRight: i % 3 !== 2 ? '1px solid rgba(0,0,0,0.12)' : 'none',
-          borderBottom: i < 3 ? '1px solid rgba(0,0,0,0.12)' : 'none',
-        }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(26,26,23,0.85) 0%, transparent 60%)' }} />
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: '#f4f1ea', lineHeight: 1 }}>{p.title}</div>
-            <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#f0a36c', marginTop: 4 }}>{p.description}</div>
+        <div
+          key={p.id ?? p.title}
+          onMouseEnter={() => setHovered(i)}
+          onMouseLeave={() => setHovered(null)}
+          style={{
+            position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+            overflow: 'hidden', minHeight: 200, cursor: 'pointer',
+            backgroundImage: `url(${p.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center',
+            borderRight: i % 3 !== 2 ? '1px solid rgba(255,255,255,0.12)' : 'none',
+            borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.12)' : 'none',
+            transition: 'transform 400ms cubic-bezier(.2,.7,.2,1)',
+            transform: hovered === i ? 'scale(1.02)' : 'scale(1)',
+          }}
+        >
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: hovered === i
+              ? 'linear-gradient(to top, rgba(26,26,23,0.95) 0%, rgba(26,26,23,0.3) 60%, transparent 100%)'
+              : 'linear-gradient(to top, rgba(26,26,23,0.8) 0%, transparent 55%)',
+            transition: 'background 350ms ease',
+          }} />
+          <div style={{ position: 'relative', zIndex: 1, padding: 24, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div>
+              <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: '#f4f1ea', lineHeight: 1 }}>{p.title}</div>
+              <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#f0a36c', marginTop: 4 }}>{p.category}</div>
+            </div>
+            {/* Arrow button */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              opacity: hovered === i ? 1 : 0,
+              transform: hovered === i ? 'translateY(0)' : 'translateY(8px)',
+              transition: 'opacity 300ms ease, transform 300ms ease',
+            }}>
+              <button
+                onClick={() => onProjectClick(p)}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  borderRadius: 999, padding: '7px 16px',
+                  color: '#f4f1ea', fontFamily: 'Geist, Inter, sans-serif',
+                  fontSize: 12, cursor: 'pointer', transition: 'background 200ms',
+                }}
+              >
+                View Project
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg>
+              </button>
+            </div>
           </div>
-        </a>
+        </div>
       ))}
     </div>
   );
@@ -243,10 +404,12 @@ function Nav() {
   return (
     <header style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-      background: scrolled ? 'rgba(244,241,234,0.92)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(14px)' : 'none',
-      boxShadow: scrolled ? '0 1px 0 rgba(0,0,0,0.06)' : 'none',
-      transition: 'background 250ms ease, box-shadow 250ms ease',
+      background: scrolled ? 'rgba(244,241,234,0.76)' : 'transparent',
+      backdropFilter: scrolled ? 'blur(32px) saturate(160%)' : 'none',
+      WebkitBackdropFilter: scrolled ? 'blur(32px) saturate(160%)' : 'none',
+      borderBottom: scrolled ? '1px solid rgba(255,255,255,0.62)' : 'none',
+      boxShadow: scrolled ? '0 1px 0 rgba(0,0,0,0.05), 0 4px 28px rgba(0,0,0,0.04)' : 'none',
+      transition: 'background 280ms ease, box-shadow 280ms ease, border-color 280ms ease, backdrop-filter 280ms ease',
     }}>
       <div className="port-frame" style={{ paddingTop: 20, paddingBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <a href="#top" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none' }}>
@@ -420,7 +583,14 @@ function About() {
 }
 
 /* ─── WORK ─── */
-function Work() {
+function Work({ projects, onProjectClick }: { projects: CmsProject[]; onProjectClick: (p: CmsProject) => void }) {
+  const menuItems: InfiniteMenuItem[] = projects.map(p => ({
+    image: p.imageUrl,
+    link: p.siteUrl,
+    title: p.title,
+    description: p.category,
+  }));
+
   return (
     <section id="work" style={{ padding: '96px 0', background: '#ebe6db' }}>
       <div className="port-frame">
@@ -439,15 +609,15 @@ function Work() {
           </motion.div>
         </Stagger>
         <Reveal variant={scaleUp} delay={0.1}>
-          <div style={{ height: 600, borderRadius: 28, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.08)' }}>
-            <ErrorBoundary fallback={<ProjectsFallback />}>
-              <InfiniteMenu items={projects} scale={1.0} />
+          <div style={{ height: 600, borderRadius: 28, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 24px 80px rgba(0,0,0,0.12)' }}>
+            <ErrorBoundary fallback={<ProjectsFallback projects={projects} onProjectClick={onProjectClick} />}>
+              <InfiniteMenu items={menuItems} scale={1.0} />
             </ErrorBoundary>
           </div>
         </Reveal>
         <Reveal variant={fadeIn} delay={0.2}>
           <p style={{ fontFamily: "'Geist Mono', monospace", fontSize: 12, color: '#6b6a63', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: 20, textAlign: 'center' }}>
-            Drag to explore · Click arrow to open project
+            Hover to explore · Click "View Project" to open
           </p>
         </Reveal>
       </div>
@@ -611,31 +781,34 @@ function Services() {
 }
 
 /* ─── TESTIMONIALS (Carousel) ─── */
-const testimonialCarouselItems: CarouselItem[] = testimonials.map((t, i) => ({
-  id: i,
-  content: (
-    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 0 }}>
-      <div>
-        <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 64, color: '#c64f17', lineHeight: 0.8, marginBottom: 12 }}>"</div>
-        <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#2c2a25', fontSize: 16, lineHeight: 1.7, margin: 0 }}>{t.quote}</p>
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 32 }}>
-        <div style={{
-          width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
-          background: 'linear-gradient(135deg, #d9c9b0 0%, #b0967a 100%)',
-          display: 'grid', placeItems: 'center',
-          fontFamily: "'Instrument Serif', serif", fontSize: 20, color: '#1a1a17',
-        }}>{t.name[0]}</div>
+function buildCarouselItems(testimonials: CmsTestimonial[]): CarouselItem[] {
+  return testimonials.map((t, i) => ({
+    id: i,
+    content: (
+      <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 0 }}>
         <div>
-          <div style={{ fontFamily: 'Geist, Inter, sans-serif', fontSize: 15, fontWeight: 600, color: '#1a1a17' }}>{t.name}</div>
-          <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6b6a63', marginTop: 2 }}>{t.role}</div>
+          <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 64, color: '#c64f17', lineHeight: 0.8, marginBottom: 12 }}>"</div>
+          <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#2c2a25', fontSize: 16, lineHeight: 1.7, margin: 0 }}>{t.quote}</p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 32 }}>
+          <div style={{
+            width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
+            background: 'linear-gradient(135deg, #d9c9b0 0%, #b0967a 100%)',
+            display: 'grid', placeItems: 'center',
+            fontFamily: "'Instrument Serif', serif", fontSize: 20, color: '#1a1a17',
+          }}>{t.name[0]}</div>
+          <div>
+            <div style={{ fontFamily: 'Geist, Inter, sans-serif', fontSize: 15, fontWeight: 600, color: '#1a1a17' }}>{t.name}</div>
+            <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6b6a63', marginTop: 2 }}>{t.role}</div>
+          </div>
         </div>
       </div>
-    </div>
-  ),
-}));
+    ),
+  }));
+}
 
-function Testimonials() {
+function Testimonials({ testimonials }: { testimonials: CmsTestimonial[] }) {
+  const carouselItems = buildCarouselItems(testimonials);
   return (
     <section style={{ padding: '96px 0', background: '#ebe6db' }}>
       <div className="port-frame">
@@ -648,7 +821,7 @@ function Testimonials() {
 
         <Reveal variant={scaleUp} delay={0.1}>
           <Carousel
-            items={testimonialCarouselItems}
+            items={carouselItems}
             baseWidth={680}
             autoplay
             autoplayDelay={4500}
@@ -852,17 +1025,33 @@ function Footer() {
 
 /* ─── ROOT ─── */
 export default function Portfolio() {
+  const [projects, setProjects] = useState<CmsProject[]>(DEFAULT_PROJECTS);
+  const [testimonials, setTestimonials] = useState<CmsTestimonial[]>(DEFAULT_TESTIMONIALS);
+  const [modalProject, setModalProject] = useState<CmsProject | null>(null);
+
+  useEffect(() => {
+    fetch('/api/projects')
+      .then(r => r.json())
+      .then((data: CmsProject[]) => { if (Array.isArray(data) && data.length > 0) setProjects(data); })
+      .catch(() => {});
+    fetch('/api/testimonials')
+      .then(r => r.json())
+      .then((data: CmsTestimonial[]) => { if (Array.isArray(data) && data.length > 0) setTestimonials(data); })
+      .catch(() => {});
+  }, []);
+
   return (
     <div style={{ background: '#f4f1ea', color: '#1a1a17', minHeight: '100vh', overflowX: 'hidden' }}>
       <Nav />
       <Hero />
       <CompaniesStrip />
       <About />
-      <Work />
+      <Work projects={projects} onProjectClick={setModalProject} />
       <Services />
-      <Testimonials />
+      <Testimonials testimonials={testimonials} />
       <Contact />
       <Footer />
+      {modalProject && <ProjectModal project={modalProject} onClose={() => setModalProject(null)} />}
     </div>
   );
 }
