@@ -1,0 +1,225 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+:root {
+  --paper: #f4f1ea;
+  --paper2: #ebe6db;
+  --ink: #1a1a17;
+  --ink2: #2c2a25;
+  --muted: #6b6a63;
+  --accent: #c64f17;
+  --olive: #5b6244;
+
+  /* shadcn compat tokens (kept minimal) */
+  --background: 48 27% 94%;
+  --foreground: 60 5% 10%;
+  --border: 60 5% 80%;
+  --card: 48 27% 94%;
+  --card-foreground: 60 5% 10%;
+  --card-border: 60 5% 85%;
+  --sidebar: 48 27% 94%;
+  --sidebar-foreground: 60 5% 10%;
+  --sidebar-border: 60 5% 80%;
+  --sidebar-primary: 60 5% 10%;
+  --sidebar-primary-foreground: 48 27% 94%;
+  --sidebar-accent: 48 20% 88%;
+  --sidebar-accent-foreground: 60 5% 10%;
+  --sidebar-ring: 16 76% 44%;
+  --popover: 48 27% 94%;
+  --popover-foreground: 60 5% 10%;
+  --popover-border: 60 5% 80%;
+  --primary: 16 76% 44%;
+  --primary-foreground: 48 27% 94%;
+  --secondary: 48 20% 88%;
+  --secondary-foreground: 60 5% 10%;
+  --muted: 48 20% 88%;
+  --muted-foreground: 60 4% 42%;
+  --accent: 16 76% 44%;
+  --accent-foreground: 48 27% 94%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --input: 60 5% 80%;
+  --ring: 16 76% 44%;
+  --radius: 0.5rem;
+
+  --button-outline: rgba(0,0,0,.10);
+  --badge-outline: rgba(0,0,0,.05);
+  --opaque-button-border-intensity: -8;
+  --elevate-1: rgba(0,0,0,.03);
+  --elevate-2: rgba(0,0,0,.08);
+  --app-font-sans: 'Geist', 'Inter', sans-serif;
+  --app-font-serif: 'Instrument Serif', serif;
+  --app-font-mono: 'Geist Mono', monospace;
+  --primary-border: hsl(var(--primary));
+  --secondary-border: hsl(var(--secondary));
+  --muted-border: hsl(var(--muted));
+  --accent-border: hsl(var(--accent));
+  --destructive-border: hsl(var(--destructive));
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Geist', 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Paper grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='5'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/></svg>");
+  opacity: 0.04;
+  mix-blend-mode: multiply;
+}
+
+/* ─── LAYOUT ─── */
+.port-frame {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (min-width: 768px) {
+  .port-frame { padding: 0 40px; }
+}
+
+/* ─── TYPOGRAPHY HELPERS ─── */
+.port-eyebrow {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ─── BUTTONS ─── */
+.port-btn-dark {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 999px;
+  padding: 13px 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: background 200ms ease, transform 200ms ease;
+}
+.port-btn-dark:hover { background: #000; transform: translateY(-1px); }
+
+.port-btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  padding: 12px 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 200ms ease, color 200ms ease;
+}
+.port-btn-ghost:hover { background: var(--ink); color: var(--paper); }
+
+/* ─── NAV LINK ─── */
+.port-nav-link {
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 15px;
+  color: #2c2a25;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+.port-nav-link:hover { color: var(--accent); }
+
+@media (min-width: 768px) {
+  .port-desktop-nav { display: flex !important; }
+}
+
+/* ─── TAG / PILL ─── */
+.port-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.07);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: #2c2a25;
+  text-decoration: none;
+}
+.port-tag-hover { transition: background 200ms ease, color 200ms ease; }
+.port-tag-hover:hover { background: var(--ink); color: var(--paper); }
+
+/* ─── ANIMATIONS ─── */
+@keyframes portMarquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes portPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+}
+
+@keyframes slowSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ─── HERO CARD HOVER ─── */
+.port-hero-card:hover .port-hero-card-default { opacity: 0 !important; }
+.port-hero-card:hover .port-hero-card-hover   { opacity: 1 !important; }
+
+/* ─── REVEAL ─── */
+.port-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(.2,.7,.2,1);
+}
+
+/* ─── DECRYPTED TEXT ─── */
+.port-decrypted-revealed { color: #2c2a25; }
+.port-decrypted-encrypted { color: #c64f17; opacity: 0.6; }
+
+/* ─── SERVICE CARD (dark bg override) ─── */
+.port-service-card {
+  width: 100%;
+  min-height: 160px;
+}
+
+/* ─── BORDER GLOW CARD INNER FULL HEIGHT ─── */
+.border-glow-card .border-glow-inner {
+  width: 100%;
+}
+
+/* ─── CANVAS cover full parent ─── */
+canvas { display: block; }
+
+/* ─── CUSTOM SCROLLBAR ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--paper); }
+::-webkit-scrollbar-thumb { background: rgba(26,26,23,0.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(26,26,23,0.5); }
+

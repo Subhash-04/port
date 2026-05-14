@@ -1,0 +1,112 @@
+#infinite-grid-menu-canvas {
+  cursor: grab;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  outline: none;
+}
+
+#infinite-grid-menu-canvas:active {
+  cursor: grabbing;
+}
+
+.infinite-menu-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.face-title {
+  user-select: none;
+  position: absolute;
+  font-weight: 900;
+  font-size: 2rem;
+  top: 50%;
+  font-family: 'Instrument Serif', serif;
+  color: #f4f1ea;
+  pointer-events: none;
+}
+
+.face-title.active {
+  opacity: 1;
+  transform: translate(20%, -50%);
+  transition: 0.5s ease;
+}
+
+.face-title.inactive {
+  opacity: 0;
+  transform: translate(10%, -50%);
+  transition: 0.1s ease;
+}
+
+.face-description {
+  user-select: none;
+  position: absolute;
+  max-width: 14ch;
+  top: 50%;
+  font-size: 0.85rem;
+  right: 2%;
+  font-family: 'Geist Mono', monospace;
+  color: #f0a36c;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.face-description.active {
+  opacity: 1;
+  transform: translate(-90%, -50%);
+  transition: 0.5s ease;
+}
+
+.face-description.inactive {
+  transform: translate(-60%, -50%);
+  opacity: 0;
+  transition: 0.1s ease;
+}
+
+.action-button {
+  position: absolute;
+  left: 50%;
+  z-index: 10;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  background: #c64f17;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #1a1a17;
+  transition: 0.5s ease;
+}
+
+.action-button.active {
+  bottom: 3.8em;
+  transform: translateX(-50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.action-button.inactive {
+  bottom: -80px;
+  transform: translateX(-50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.action-button-icon {
+  user-select: none;
+  position: relative;
+  color: #f4f1ea;
+  top: 1px;
+  font-size: 22px;
+}
+
+@media (max-width: 1024px) {
+  .face-title,
+  .face-description {
+    display: none;
+  }
+}
