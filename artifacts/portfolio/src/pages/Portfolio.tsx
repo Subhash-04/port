@@ -246,8 +246,9 @@ function Hero() {
               Open to work · Freelance & full-time
             </div>
 
-            <h1 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 0.92, fontSize: 'clamp(52px, 7vw, 110px)', color: '#1a1a17', margin: 0 }}>
-              Hey, I'm <span style={{ color: '#c64f17', fontStyle: 'italic' }}>Subhash</span>—<br />
+            <h1 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 0.95, fontSize: 'clamp(52px, 7vw, 110px)', color: '#1a1a17', margin: 0 }}>
+              Hey, I'm<br />
+              <span style={{ color: '#c64f17', fontStyle: 'italic' }}>Subhash</span>—<br />
               a designer<br />
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 12 }}>
                 who <span style={{ fontStyle: 'italic', color: '#c64f17' }}>builds.</span>
@@ -322,18 +323,6 @@ function About() {
           <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(40px, 5vw, 64px)', color: '#1a1a17', lineHeight: 0.95, margin: 0 }}>
             A short<br /><span style={{ fontStyle: 'italic', color: '#c64f17' }}>introduction.</span>
           </h2>
-          <div style={{
-            marginTop: 40, borderRadius: 24, overflow: 'hidden', height: 260,
-            border: '1px solid rgba(255,255,255,0.7)',
-            background: 'rgba(255,255,255,0.48)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.9)',
-          }}>
-            <ErrorBoundary fallback={<ToolsFallback />}>
-              <TechPillsCanvas />
-            </ErrorBoundary>
-          </div>
         </div>
         <div style={{ paddingTop: 60 }}>
           <div style={{ color: '#2c2a25', fontSize: 18, lineHeight: 1.7, marginBottom: 24, fontFamily: 'Geist, Inter, sans-serif' }}>
