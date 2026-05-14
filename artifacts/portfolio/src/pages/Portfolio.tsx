@@ -1,9 +1,62 @@
 import { useState, useEffect, useRef } from 'react';
+import { motion, useInView } from 'motion/react';
 import DecryptedText from '@/components/DecryptedText';
 import InfiniteMenu, { InfiniteMenuItem } from '@/components/InfiniteMenu';
 import TechPillsCanvas from '@/components/TechPillsCanvas';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import Carousel, { CarouselItem } from '@/components/Carousel';
+
+/* ─── ANIMATION PRESETS ─── */
+const VP = { once: true, amount: 0.15 } as const;
+const T  = { duration: 0.75, ease: [0.22, 1, 0.36, 1] } as const;
+const Tfast = { duration: 0.5, ease: [0.22, 1, 0.36, 1] } as const;
+
+const fadeUp   = { hidden: { opacity: 0, y: 40 },  visible: { opacity: 1, y: 0 } };
+const fadeIn   = { hidden: { opacity: 0 },          visible: { opacity: 1 } };
+const slideL   = { hidden: { opacity: 0, x: -48 }, visible: { opacity: 1, x: 0 } };
+const slideR   = { hidden: { opacity: 0, x: 48 },  visible: { opacity: 1, x: 0 } };
+const scaleUp  = { hidden: { opacity: 0, scale: 0.92 }, visible: { opacity: 1, scale: 1 } };
+
+function Stagger({ children, delay = 0, gap = 0.1, className, style }: {
+  children: React.ReactNode; delay?: number; gap?: number;
+  className?: string; style?: React.CSSProperties;
+}) {
+  const ref = useRef(null);
+  const inView = useInView(ref, VP);
+  return (
+    <motion.div
+      ref={ref}
+      initial="hidden"
+      animate={inView ? 'visible' : 'hidden'}
+      variants={{ hidden: {}, visible: { transition: { staggerChildren: gap, delayChildren: delay } } }}
+      className={className}
+      style={style}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function Reveal({ children, variant = fadeUp, delay = 0, style, className }: {
+  children: React.ReactNode; variant?: typeof fadeUp; delay?: number;
+  style?: React.CSSProperties; className?: string;
+}) {
+  const ref = useRef(null);
+  const inView = useInView(ref, VP);
+  return (
+    <motion.div
+      ref={ref}
+      initial="hidden"
+      animate={inView ? 'visible' : 'hidden'}
+      variants={variant}
+      transition={{ ...T, delay }}
+      style={style}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 /* ─── DATA ─── */
 const projects: InfiniteMenuItem[] = [
@@ -231,9 +284,14 @@ function Hero() {
     <section id="top" style={{ position: 'relative', paddingTop: 120, paddingBottom: 80 }}>
       <div className="port-frame">
         <div className="hero-grid">
-          {/* Left: text */}
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <div style={{
+          {/* Left: text — staggered entrance */}
+          <motion.div
+            style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+            initial="hidden"
+            animate="visible"
+            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } } }}
+          >
+            <motion.div variants={fadeUp} transition={T} style={{
               display: 'inline-flex', alignItems: 'center', gap: 10,
               background: 'rgba(255,255,255,0.65)',
               backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
@@ -244,9 +302,9 @@ function Hero() {
             }}>
               <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#16a34a', boxShadow: '0 0 0 4px rgba(22,163,74,0.18)', animation: 'portPulse 2.2s ease-in-out infinite', flexShrink: 0 }} />
               Open to work · Freelance & full-time
-            </div>
+            </motion.div>
 
-            <h1 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 0.95, fontSize: 'clamp(52px, 7vw, 110px)', color: '#1a1a17', margin: 0 }}>
+            <motion.h1 variants={fadeUp} transition={T} style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 0.95, fontSize: 'clamp(52px, 7vw, 110px)', color: '#1a1a17', margin: 0 }}>
               Hey, I'm<br />
               <span style={{ color: '#c64f17', fontStyle: 'italic' }}>Subhash</span>—<br />
               a designer<br />
@@ -254,34 +312,39 @@ function Hero() {
                 who <span style={{ fontStyle: 'italic', color: '#c64f17' }}>builds.</span>
                 <SunStar size={56} />
               </span>
-            </h1>
+            </motion.h1>
 
-            <p style={{ fontFamily: 'Geist, Inter, sans-serif', marginTop: 28, color: '#2c2a25', fontSize: 17, lineHeight: 1.65, maxWidth: 500 }}>
+            <motion.p variants={fadeUp} transition={T} style={{ fontFamily: 'Geist, Inter, sans-serif', marginTop: 28, color: '#2c2a25', fontSize: 17, lineHeight: 1.65, maxWidth: 500 }}>
               Multidisciplinary designer & developer crafting digital experiences that blend cutting-edge tech with elegant design. Currently based in Guntur, India — available worldwide.
-            </p>
+            </motion.p>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 32 }}>
+            <motion.div variants={fadeUp} transition={T} style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 32 }}>
               <a href="#work" className="port-btn-dark" style={{ fontSize: 15 }}>
                 See selected work
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 12h14" /><path d="M13 6l6 6-6 6" /></svg>
               </a>
               <a href="#contact" className="port-btn-ghost" style={{ fontSize: 15 }}>Get in touch</a>
-            </div>
+            </motion.div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, marginTop: 44 }}>
+            <motion.div variants={fadeUp} transition={T} style={{ display: 'flex', flexWrap: 'wrap', gap: 32, marginTop: 44 }}>
               {[['20+', 'shipped projects'], ['3 yrs', 'design + code'], ['100%', 'AI-fluent']].map(([num, label]) => (
                 <div key={label}>
                   <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 40, color: '#1a1a17', lineHeight: 1 }}>{num}</div>
                   <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#6b6a63', marginTop: 4 }}>{label}</div>
                 </div>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
-          {/* Right: poster card */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 0' }}>
+          {/* Right: poster card — slides in from right */}
+          <motion.div
+            initial={{ opacity: 0, x: 60 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ ...T, delay: 0.35 }}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 0' }}
+          >
             <HeroPosterCard />
-          </div>
+          </motion.div>
         </div>
 
         {/* Marquee */}
@@ -318,20 +381,25 @@ function About() {
   return (
     <section id="about" style={{ padding: '96px 0' }}>
       <div className="port-frame" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'start' }}>
-        <div>
-          <div className="port-eyebrow" style={{ marginBottom: 20 }}>— About</div>
-          <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(40px, 5vw, 64px)', color: '#1a1a17', lineHeight: 0.95, margin: 0 }}>
-            A short<br /><span style={{ fontStyle: 'italic', color: '#c64f17' }}>introduction.</span>
-          </h2>
-        </div>
-        <div style={{ paddingTop: 60 }}>
-          <div style={{ color: '#2c2a25', fontSize: 18, lineHeight: 1.7, marginBottom: 24, fontFamily: 'Geist, Inter, sans-serif' }}>
+        {/* Left: sticky heading slides in from left */}
+        <Reveal variant={slideL}>
+          <div style={{ position: 'sticky', top: 120 }}>
+            <div className="port-eyebrow" style={{ marginBottom: 20 }}>— About</div>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(40px, 5vw, 64px)', color: '#1a1a17', lineHeight: 0.95, margin: 0 }}>
+              A short<br /><span style={{ fontStyle: 'italic', color: '#c64f17' }}>introduction.</span>
+            </h2>
+          </div>
+        </Reveal>
+
+        {/* Right: staggered content fades up */}
+        <Stagger style={{ paddingTop: 60 }} delay={0.1} gap={0.15}>
+          <motion.div variants={fadeUp} transition={T} style={{ color: '#2c2a25', fontSize: 18, lineHeight: 1.7, marginBottom: 24, fontFamily: 'Geist, Inter, sans-serif' }}>
             <DecryptedText text={aboutText1} animateOn="view" sequential revealDirection="start" speed={18} className="port-decrypted-revealed" encryptedClassName="port-decrypted-encrypted" />
-          </div>
-          <div style={{ color: '#2c2a25', fontSize: 18, lineHeight: 1.7, marginBottom: 32, fontFamily: 'Geist, Inter, sans-serif' }}>
+          </motion.div>
+          <motion.div variants={fadeUp} transition={T} style={{ color: '#2c2a25', fontSize: 18, lineHeight: 1.7, marginBottom: 32, fontFamily: 'Geist, Inter, sans-serif' }}>
             <DecryptedText text={aboutText2} animateOn="view" sequential revealDirection="start" speed={14} className="port-decrypted-revealed" encryptedClassName="port-decrypted-encrypted" />
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+          </motion.div>
+          <motion.div variants={fadeUp} transition={T} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
             <div>
               <div className="port-eyebrow" style={{ marginBottom: 10 }}>— Worked with</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -344,8 +412,8 @@ function About() {
                 {tools.map(t => <span key={t} className="port-tag-glass">{t}</span>)}
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </Stagger>
       </div>
     </section>
   );
@@ -356,26 +424,32 @@ function Work() {
   return (
     <section id="work" style={{ padding: '96px 0', background: '#ebe6db' }}>
       <div className="port-frame">
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, marginBottom: 48, flexWrap: 'wrap' }}>
-          <div>
+        <Stagger style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, marginBottom: 48, flexWrap: 'wrap' }}>
+          <motion.div variants={fadeUp} transition={T}>
             <div className="port-eyebrow" style={{ marginBottom: 16 }}>— Selected Work</div>
             <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(40px, 6vw, 80px)', color: '#1a1a17', lineHeight: 0.95, margin: 0 }}>
               Things I've <span style={{ fontStyle: 'italic', color: '#c64f17' }}>built</span><br />recently.
             </h2>
+          </motion.div>
+          <motion.div variants={fadeUp} transition={{ ...T, delay: 0.15 }}>
+            <a href="https://github.com/subhash-04" target="_blank" rel="noreferrer" className="port-btn-ghost" style={{ fontSize: 14 }}>
+              View all on GitHub
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M7 17L17 7" /><path d="M9 7h8v8" /></svg>
+            </a>
+          </motion.div>
+        </Stagger>
+        <Reveal variant={scaleUp} delay={0.1}>
+          <div style={{ height: 600, borderRadius: 28, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.08)' }}>
+            <ErrorBoundary fallback={<ProjectsFallback />}>
+              <InfiniteMenu items={projects} scale={1.0} />
+            </ErrorBoundary>
           </div>
-          <a href="https://github.com/subhash-04" target="_blank" rel="noreferrer" className="port-btn-ghost" style={{ fontSize: 14 }}>
-            View all on GitHub
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M7 17L17 7" /><path d="M9 7h8v8" /></svg>
-          </a>
-        </div>
-        <div style={{ height: 600, borderRadius: 28, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.08)' }}>
-          <ErrorBoundary fallback={<ProjectsFallback />}>
-            <InfiniteMenu items={projects} scale={1.0} />
-          </ErrorBoundary>
-        </div>
-        <p style={{ fontFamily: "'Geist Mono', monospace", fontSize: 12, color: '#6b6a63', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: 20, textAlign: 'center' }}>
-          Drag to explore · Click arrow to open project
-        </p>
+        </Reveal>
+        <Reveal variant={fadeIn} delay={0.2}>
+          <p style={{ fontFamily: "'Geist Mono', monospace", fontSize: 12, color: '#6b6a63', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: 20, textAlign: 'center' }}>
+            Drag to explore · Click arrow to open project
+          </p>
+        </Reveal>
       </div>
     </section>
   );
@@ -506,38 +580,24 @@ function ServiceRow({ s, delay }: { s: typeof services[0]; delay: number }) {
 
 /* ─── SERVICES ─── */
 function Services() {
-  const headRef = useRef<HTMLDivElement>(null);
-  const headVisible = useScrollReveal(headRef as React.RefObject<HTMLElement>, 0.15);
-
   return (
     <section id="services" style={{ padding: '96px 0' }}>
       <div className="port-frame">
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 2fr',
-          gap: 64,
-          alignItems: 'start',
-        }}>
-          {/* Left: heading block */}
-          <div
-            ref={headRef}
-            style={{
-              position: 'sticky', top: 120,
-              opacity: headVisible ? 1 : 0,
-              transform: headVisible ? 'translateY(0)' : 'translateY(24px)',
-              transition: 'opacity 0.7s ease, transform 0.7s cubic-bezier(.2,.7,.2,1)',
-            }}
-          >
-            <div className="port-eyebrow" style={{ marginBottom: 16 }}>— Services</div>
-            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(36px, 4.5vw, 64px)', color: '#1a1a17', lineHeight: 0.95, margin: '0 0 20px' }}>
-              How I can<br /><span style={{ fontStyle: 'italic', color: '#c64f17' }}>help.</span>
-            </h2>
-            <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#6b6a63', fontSize: 15, lineHeight: 1.7, margin: 0 }}>
-              Full ownership from problem to shipped product — or an extra pair of expert hands on a focused engagement.
-            </p>
-          </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 64, alignItems: 'start' }}>
+          {/* Left: heading block slides in from left, sticky */}
+          <Reveal variant={slideL}>
+            <div style={{ position: 'sticky', top: 120 }}>
+              <div className="port-eyebrow" style={{ marginBottom: 16 }}>— Services</div>
+              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(36px, 4.5vw, 64px)', color: '#1a1a17', lineHeight: 0.95, margin: '0 0 20px' }}>
+                How I can<br /><span style={{ fontStyle: 'italic', color: '#c64f17' }}>help.</span>
+              </h2>
+              <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#6b6a63', fontSize: 15, lineHeight: 1.7, margin: 0 }}>
+                Full ownership from problem to shipped product — or an extra pair of expert hands on a focused engagement.
+              </p>
+            </div>
+          </Reveal>
 
-          {/* Right: service rows */}
+          {/* Right: service rows stagger in */}
           <div>
             {services.map((s, i) => (
               <ServiceRow key={s.num} s={s} delay={i * 80} />
@@ -576,35 +636,26 @@ const testimonialCarouselItems: CarouselItem[] = testimonials.map((t, i) => ({
 }));
 
 function Testimonials() {
-  const headRef = useRef<HTMLDivElement>(null);
-  const headVisible = useScrollReveal(headRef as React.RefObject<HTMLElement>, 0.15);
-
   return (
     <section style={{ padding: '96px 0', background: '#ebe6db' }}>
       <div className="port-frame">
-        <div
-          ref={headRef}
-          style={{
-            marginBottom: 48,
-            opacity: headVisible ? 1 : 0,
-            transform: headVisible ? 'translateY(0)' : 'translateY(24px)',
-            transition: 'opacity 0.7s ease, transform 0.7s cubic-bezier(.2,.7,.2,1)',
-          }}
-        >
+        <Reveal variant={fadeUp} style={{ marginBottom: 48 }}>
           <div className="port-eyebrow" style={{ marginBottom: 16 }}>— Kind words</div>
           <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(36px, 5vw, 64px)', color: '#1a1a17', lineHeight: 0.95, margin: 0 }}>
             What people say<br />about <span style={{ fontStyle: 'italic', color: '#c64f17' }}>working with me.</span>
           </h2>
-        </div>
+        </Reveal>
 
-        <Carousel
-          items={testimonialCarouselItems}
-          baseWidth={680}
-          autoplay
-          autoplayDelay={4500}
-          pauseOnHover
-          loop
-        />
+        <Reveal variant={scaleUp} delay={0.1}>
+          <Carousel
+            items={testimonialCarouselItems}
+            baseWidth={680}
+            autoplay
+            autoplayDelay={4500}
+            pauseOnHover
+            loop
+          />
+        </Reveal>
       </div>
     </section>
   );
@@ -709,17 +760,19 @@ function Contact() {
     <section id="contact" style={{ padding: '96px 0', position: 'relative', overflow: 'hidden' }}>
       <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />
       <div className="port-frame" style={{ position: 'relative', zIndex: 1 }}>
-        <div style={{ textAlign: 'center', marginBottom: 64 }}>
-          <Asterisk size={28} />
-          <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(52px, 9vw, 128px)', color: '#1a1a17', lineHeight: 0.9, marginTop: 16, marginBottom: 24 }}>
+        <Stagger style={{ textAlign: 'center', marginBottom: 64 }} gap={0.15}>
+          <motion.div variants={fadeIn} transition={Tfast}>
+            <Asterisk size={28} />
+          </motion.div>
+          <motion.h2 variants={fadeUp} transition={T} style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(52px, 9vw, 128px)', color: '#1a1a17', lineHeight: 0.9, marginTop: 16, marginBottom: 24 }}>
             Let's make<br /><span style={{ fontStyle: 'italic', color: '#c64f17' }}>something good.</span>
-          </h2>
-          <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#2c2a25', fontSize: 18, maxWidth: 520, margin: '0 auto' }}>
+          </motion.h2>
+          <motion.p variants={fadeUp} transition={T} style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#2c2a25', fontSize: 18, maxWidth: 520, margin: '0 auto' }}>
             Open for freelance, partnerships, and the occasional weird experiment. I usually reply within 24 hours.
-          </p>
-        </div>
+          </motion.p>
+        </Stagger>
         <div style={{ display: 'grid', gridTemplateColumns: '5fr 7fr', gap: 48 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <Reveal variant={slideL} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <div>
               <div className="port-eyebrow" style={{ marginBottom: 6 }}>— Email</div>
               <a href="mailto:hello@subhash.dev" style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(20px, 3vw, 36px)', color: '#1a1a17', textDecoration: 'none', transition: 'color 200ms ease' }}
@@ -742,8 +795,8 @@ function Contact() {
               <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#16a34a', boxShadow: '0 0 0 4px rgba(22,163,74,0.18)', animation: 'portPulse 2.2s ease-in-out infinite' }} />
               Available for new work — May 2026
             </div>
-          </div>
-          <div style={{
+          </Reveal>
+          <Reveal variant={slideR} delay={0.1} style={{
             background: 'rgba(255,255,255,0.62)',
             backdropFilter: 'blur(28px)',
             WebkitBackdropFilter: 'blur(28px)',
@@ -753,7 +806,7 @@ function Contact() {
             boxShadow: '0 8px 40px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.95)',
           }}>
             <ContactForm />
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>
@@ -765,12 +818,12 @@ function Footer() {
   return (
     <footer style={{ background: '#1a1a17', color: '#f4f1ea', paddingTop: 80, paddingBottom: 40 }}>
       <div className="port-frame">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginBottom: 64 }}>
-          <div>
+        <Stagger style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginBottom: 64 }} gap={0.12}>
+          <motion.div variants={slideL} transition={T}>
             <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(244,241,234,0.5)', marginBottom: 12 }}>— Currently</div>
             <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: '#f4f1ea' }}>Freelancing from Guntur, India. Available worldwide.</div>
-          </div>
-          <div>
+          </motion.div>
+          <motion.div variants={slideR} transition={T}>
             <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(244,241,234,0.5)', marginBottom: 12 }}>— Sitemap</div>
             <ul style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 24px', listStyle: 'none', margin: 0, padding: 0 }}>
               {[...navItems, { label: 'Email', href: 'mailto:hello@subhash.dev' }].map(it => (
@@ -780,11 +833,13 @@ function Footer() {
                 >{it.label}</a></li>
               ))}
             </ul>
+          </motion.div>
+        </Stagger>
+        <Reveal variant={{ hidden: { opacity: 0, y: 60 }, visible: { opacity: 1, y: 0 } }}>
+          <div style={{ fontFamily: "'Instrument Serif', serif", letterSpacing: '-0.05em', lineHeight: 0.85, fontSize: 'clamp(80px, 20vw, 320px)', color: '#f4f1ea' }}>
+            Subhash<span style={{ color: '#c64f17' }}>.</span>
           </div>
-        </div>
-        <div style={{ fontFamily: "'Instrument Serif', serif", letterSpacing: '-0.05em', lineHeight: 0.85, fontSize: 'clamp(80px, 20vw, 320px)', color: '#f4f1ea' }}>
-          Subhash<span style={{ color: '#c64f17' }}>.</span>
-        </div>
+        </Reveal>
         <div style={{ height: 1, background: 'rgba(244,241,234,0.18)', marginTop: 40 }} />
         <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
           <div style={{ fontFamily: 'Geist, Inter, sans-serif', fontSize: 12, color: 'rgba(244,241,234,0.5)' }}>© 2026 Subhash Mandalapu. All rights reserved.</div>
