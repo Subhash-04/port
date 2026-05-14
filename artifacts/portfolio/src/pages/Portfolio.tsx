@@ -1083,7 +1083,7 @@ export default function Portfolio() {
   const [modalProject, setModalProject] = useState<CmsProject | null>(null);
 
   useEffect(() => {
-    fetch('/api/projects')
+    fetch('/api/works')
       .then(r => r.json())
       .then((data: CmsProject[]) => { if (Array.isArray(data) && data.length > 0) setProjects(data); })
       .catch(() => {});

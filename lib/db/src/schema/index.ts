@@ -1,4 +1,4 @@
-export * from "./projects";
+export * from "./works";
 export * from "./testimonials";
 export * from "./site-content";
 export * from "./admin-config";

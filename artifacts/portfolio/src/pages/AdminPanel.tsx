@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 /* ─── TYPES ─── */
-interface Project { id: number; title: string; description: string; imageUrl: string; siteUrl: string; category: string; displayOrder: number; }
+interface Work { id: number; title: string; description: string; imageUrl: string; siteUrl: string; category: string; displayOrder: number; }
 interface Testimonial { id: number; name: string; role: string; quote: string; displayOrder: number; }
 type ContentMap = Record<string, string>;
 type Step = 'password' | 'otp' | 'dashboard';
-type Tab = 'projects' | 'testimonials' | 'content' | 'password';
+type Tab = 'works' | 'testimonials' | 'content' | 'password';
 
 const SESSION_KEY = 'admin_session_token';
 
@@ -328,8 +328,8 @@ function OtpStep({ devOtp, onSuccess, onBack }: { devOtp?: string; onSuccess: (t
   );
 }
 
-/* ─── PROJECT FORM ─── */
-function ProjectForm({ initial, onSave, onCancel }: { initial?: Partial<Project>; onSave: (p: Project) => void; onCancel: () => void; }) {
+/* ─── WORK FORM ─── */
+function WorkForm({ initial, onSave, onCancel }: { initial?: Partial<Work>; onSave: (p: Work) => void; onCancel: () => void; }) {
   const [form, setForm] = useState({ title: initial?.title || '', description: initial?.description || '', imageUrl: initial?.imageUrl || '', siteUrl: initial?.siteUrl || '', category: initial?.category || '', displayOrder: initial?.displayOrder ?? 0 });
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState('');
@@ -339,7 +339,7 @@ function ProjectForm({ initial, onSave, onCancel }: { initial?: Partial<Project>
     if (!form.title.trim()) { setErr('Title is required'); return; }
     setSaving(true); setErr('');
     try {
-      const url = initial?.id ? `/api/projects/${initial.id}` : '/api/projects';
+      const url = initial?.id ? `/api/works/${initial.id}` : '/api/works';
       const result = await apiFetch(url, { method: initial?.id ? 'PUT' : 'POST', headers: apiHeaders(), body: JSON.stringify(form) });
       onSave(result);
     } catch { setErr('Failed to save.'); }
@@ -351,7 +351,7 @@ function ProjectForm({ initial, onSave, onCancel }: { initial?: Partial<Project>
   return (
     <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-        <div><Label>Title *</Label><input value={form.title} onChange={set('title')} placeholder="Project name" style={inputStyle} /></div>
+        <div><Label>Title *</Label><input value={form.title} onChange={set('title')} placeholder="Work title" style={inputStyle} /></div>
         <div><Label>Category</Label><input value={form.category} onChange={set('category')} placeholder="Frontend · Tool" style={inputStyle} /></div>
       </div>
       <div><Label>Description</Label><textarea value={form.description} onChange={set('description')} rows={4} placeholder="What does this project do?" style={{ ...inputStyle, resize: 'vertical' }} /></div>
@@ -361,7 +361,7 @@ function ProjectForm({ initial, onSave, onCancel }: { initial?: Partial<Project>
       <div><Label>Display Order</Label><input type="number" value={form.displayOrder} onChange={e => setForm(f => ({ ...f, displayOrder: parseInt(e.target.value) || 0 }))} style={{ ...inputStyle, width: 100 }} /></div>
       {err && <div style={{ color: '#b91c1c', fontSize: 13, fontFamily: 'Geist, Inter, sans-serif' }}>{err}</div>}
       <div style={{ display: 'flex', gap: 10 }}>
-        <button type="submit" style={btnAccent} disabled={saving}>{saving ? 'Saving…' : initial?.id ? 'Update Project' : 'Add Project'}</button>
+        <button type="submit" style={btnAccent} disabled={saving}>{saving ? 'Saving…' : initial?.id ? 'Update Work' : 'Add Work'}</button>
         <button type="button" style={btnGhost} onClick={onCancel}>Cancel</button>
       </div>
     </form>
@@ -405,35 +405,35 @@ function TestimonialForm({ initial, onSave, onCancel }: { initial?: Partial<Test
   );
 }
 
-/* ─── PROJECTS TAB ─── */
-function ProjectsTab() {
-  const [projects, setProjects] = useState<Project[]>([]);
+/* ─── WORKS TAB ─── */
+function WorksTab() {
+  const [works, setWorks] = useState<Work[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState<Partial<Project> | null>(null);
+  const [editing, setEditing] = useState<Partial<Work> | null>(null);
   const [adding, setAdding] = useState(false);
-  const load = useCallback(async () => { setLoading(true); try { setProjects(await apiFetch('/api/projects')); } catch {} setLoading(false); }, []);
+  const load = useCallback(async () => { setLoading(true); try { setWorks(await apiFetch('/api/works')); } catch {} setLoading(false); }, []);
   useEffect(() => { load(); }, [load]);
   const remove = async (id: number) => {
-    if (!confirm('Delete this project?')) return;
-    await apiFetch(`/api/projects/${id}`, { method: 'DELETE', headers: apiHeaders() });
-    setProjects(p => p.filter(x => x.id !== id));
+    if (!confirm('Delete this work?')) return;
+    await apiFetch(`/api/works/${id}`, { method: 'DELETE', headers: apiHeaders() });
+    setWorks(p => p.filter(x => x.id !== id));
   };
   if (loading) return <div style={{ padding: 40, color: '#6b6a63', fontFamily: 'Geist, Inter, sans-serif' }}>Loading…</div>;
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-        <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 32, color: '#1a1a17', margin: 0 }}>Projects</h2>
-        {!adding && !editing && <button style={btnAccent} onClick={() => setAdding(true)}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>Add Project</button>}
+        <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 32, color: '#1a1a17', margin: 0 }}>Works</h2>
+        {!adding && !editing && <button style={btnAccent} onClick={() => setAdding(true)}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>Add Work</button>}
       </div>
       {(adding || editing) && (
         <div style={{ ...glass, padding: 28, marginBottom: 24 }}>
-          <h3 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: '#1a1a17', margin: '0 0 20px' }}>{editing ? 'Edit Project' : 'New Project'}</h3>
-          <ProjectForm initial={editing || undefined} onSave={(p) => { setProjects(prev => editing ? prev.map(x => x.id === p.id ? p : x) : [...prev, p]); setEditing(null); setAdding(false); }} onCancel={() => { setEditing(null); setAdding(false); }} />
+          <h3 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: '#1a1a17', margin: '0 0 20px' }}>{editing ? 'Edit Work' : 'New Work'}</h3>
+          <WorkForm initial={editing || undefined} onSave={(p) => { setWorks(prev => editing ? prev.map(x => x.id === p.id ? p : x) : [...prev, p]); setEditing(null); setAdding(false); }} onCancel={() => { setEditing(null); setAdding(false); }} />
         </div>
       )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {projects.length === 0 && <div style={{ color: '#6b6a63', fontFamily: 'Geist, Inter, sans-serif', padding: 24, textAlign: 'center' }}>No projects yet. Add your first project above.</div>}
-        {projects.map(p => (
+        {works.length === 0 && <div style={{ color: '#6b6a63', fontFamily: 'Geist, Inter, sans-serif', padding: 24, textAlign: 'center' }}>No works yet. Add your first work above.</div>}
+        {works.map(p => (
           <div key={p.id} style={{ ...glass, padding: '16px 20px', display: 'grid', gridTemplateColumns: '56px 1fr auto', gap: 16, alignItems: 'center' }}>
             <div style={{ width: 56, height: 56, borderRadius: 12, overflow: 'hidden', background: '#ebe6db', flexShrink: 0 }}>
               {p.imageUrl ? <img src={p.imageUrl} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : null}
@@ -710,10 +710,10 @@ function NavItem({ icon, label, active, onClick }: { icon: React.ReactNode; labe
 
 /* ─── DASHBOARD ─── */
 function Dashboard({ onSignOut }: { onSignOut: () => void }) {
-  const [tab, setTab] = useState<Tab>('projects');
+  const [tab, setTab] = useState<Tab>('works');
 
   const navItems: { id: Tab; label: string; icon: React.ReactNode }[] = [
-    { id: 'projects', label: 'Projects', icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> },
+    { id: 'works', label: 'Works', icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> },
     { id: 'testimonials', label: 'Testimonials', icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
     { id: 'content', label: 'Site Content', icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> },
     { id: 'password', label: 'Password', icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> },
@@ -764,7 +764,7 @@ function Dashboard({ onSignOut }: { onSignOut: () => void }) {
       {/* Main content */}
       <div style={{ flex: 1, padding: '48px 40px', overflow: 'auto' }}>
         <div style={{ maxWidth: 920, margin: '0 auto' }}>
-          {tab === 'projects' && <ProjectsTab />}
+          {tab === 'works' && <WorksTab />}
           {tab === 'testimonials' && <TestimonialsTab />}
           {tab === 'content' && <ContentTab />}
           {tab === 'password' && <PasswordTab />}
