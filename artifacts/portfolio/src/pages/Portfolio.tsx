@@ -247,7 +247,7 @@ function Hero() {
             </div>
 
             <h1 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 0.92, fontSize: 'clamp(52px, 7vw, 110px)', color: '#1a1a17', margin: 0 }}>
-              <span style={{ color: '#c64f17', fontStyle: 'italic' }}>Subhash</span>—<br />
+              Hey, I'm <span style={{ color: '#c64f17', fontStyle: 'italic' }}>Subhash</span>—<br />
               a designer<br />
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 12 }}>
                 who <span style={{ fontStyle: 'italic', color: '#c64f17' }}>builds.</span>
@@ -341,6 +341,20 @@ function About() {
           </div>
           <div style={{ color: '#2c2a25', fontSize: 18, lineHeight: 1.7, marginBottom: 32, fontFamily: 'Geist, Inter, sans-serif' }}>
             <DecryptedText text={aboutText2} animateOn="view" sequential revealDirection="start" speed={14} className="port-decrypted-revealed" encryptedClassName="port-decrypted-encrypted" />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+            <div>
+              <div className="port-eyebrow" style={{ marginBottom: 10 }}>— Worked with</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {companies.map(c => <span key={c} className="port-tag-glass">{c}</span>)}
+              </div>
+            </div>
+            <div>
+              <div className="port-eyebrow" style={{ marginBottom: 10 }}>— Tools of trade</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {tools.map(t => <span key={t} className="port-tag-glass">{t}</span>)}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -504,40 +518,44 @@ function ServiceRow({ s, delay }: { s: typeof services[0]; delay: number }) {
 /* ─── SERVICES ─── */
 function Services() {
   const headRef = useRef<HTMLDivElement>(null);
-  const headVisible = useScrollReveal(headRef as React.RefObject<HTMLElement>, 0.2);
+  const headVisible = useScrollReveal(headRef as React.RefObject<HTMLElement>, 0.15);
 
   return (
     <section id="services" style={{ padding: '96px 0' }}>
       <div className="port-frame">
-        {/* Header */}
-        <div
-          ref={headRef}
-          style={{
-            display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
-            gap: 32, marginBottom: 12, flexWrap: 'wrap',
-            opacity: headVisible ? 1 : 0,
-            transform: headVisible ? 'translateY(0)' : 'translateY(24px)',
-            transition: 'opacity 0.7s ease, transform 0.7s cubic-bezier(.2,.7,.2,1)',
-          }}
-        >
-          <div>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 2fr',
+          gap: 64,
+          alignItems: 'start',
+        }}>
+          {/* Left: heading block */}
+          <div
+            ref={headRef}
+            style={{
+              position: 'sticky', top: 120,
+              opacity: headVisible ? 1 : 0,
+              transform: headVisible ? 'translateY(0)' : 'translateY(24px)',
+              transition: 'opacity 0.7s ease, transform 0.7s cubic-bezier(.2,.7,.2,1)',
+            }}
+          >
             <div className="port-eyebrow" style={{ marginBottom: 16 }}>— Services</div>
-            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(40px, 5vw, 72px)', color: '#1a1a17', lineHeight: 0.95, margin: 0 }}>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 'clamp(36px, 4.5vw, 64px)', color: '#1a1a17', lineHeight: 0.95, margin: '0 0 20px' }}>
               How I can<br /><span style={{ fontStyle: 'italic', color: '#c64f17' }}>help.</span>
             </h2>
+            <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#6b6a63', fontSize: 15, lineHeight: 1.7, margin: 0 }}>
+              Full ownership from problem to shipped product — or an extra pair of expert hands on a focused engagement.
+            </p>
           </div>
-          <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#2c2a25', fontSize: 16, lineHeight: 1.65, maxWidth: 340, margin: 0 }}>
-            Full ownership from problem to shipped product — or an expert pair of hands on a focused engagement.
-          </p>
+
+          {/* Right: service rows */}
+          <div>
+            {services.map((s, i) => (
+              <ServiceRow key={s.num} s={s} delay={i * 80} />
+            ))}
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.08)' }} />
+          </div>
         </div>
-
-        {/* Divider */}
-        <div style={{ height: 1, background: 'rgba(0,0,0,0.1)', marginBottom: 0 }} />
-
-        {/* Service rows */}
-        {services.map((s, i) => (
-          <ServiceRow key={s.num} s={s} delay={i * 80} />
-        ))}
       </div>
     </section>
   );
