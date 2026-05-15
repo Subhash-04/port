@@ -5,7 +5,7 @@ interface Work { id: number; title: string; description: string; imageUrl: strin
 interface Testimonial { id: number; name: string; role: string; quote: string; displayOrder: number; }
 type ContentMap = Record<string, string>;
 type Step = 'password' | 'otp' | 'dashboard';
-type Tab = 'works' | 'testimonials' | 'hero' | 'about' | 'work' | 'services' | 'contact' | 'footer' | 'analytics' | 'password';
+type Tab = 'works' | 'testimonials' | 'hero' | 'about' | 'services' | 'contact' | 'footer' | 'analytics' | 'password';
 
 const SESSION_KEY = 'admin_session_token';
 
@@ -872,7 +872,6 @@ function Dashboard({ onSignOut }: { onSignOut: () => void }) {
       items: [
         { id: 'hero', label: 'Hero', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> },
         { id: 'about', label: 'About', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> },
-        { id: 'work', label: 'Work Section', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> },
         { id: 'services', label: 'Services', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> },
         { id: 'contact', label: 'Contact', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> },
         { id: 'footer', label: 'Footer', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="3" y1="22" x2="21" y2="22"/><path d="M5 22V10l7-8 7 8v12"/></svg> },
@@ -937,7 +936,6 @@ function Dashboard({ onSignOut }: { onSignOut: () => void }) {
           {tab === 'testimonials' && <TestimonialsTab />}
           {tab === 'hero' && <SectionTab section="hero" fields={SECTION_FIELDS['hero'] ?? []} />}
           {tab === 'about' && <SectionTab section="about" fields={SECTION_FIELDS['about'] ?? []} />}
-          {tab === 'work' && <SectionTab section="work" fields={SECTION_FIELDS['work'] ?? []} />}
           {tab === 'services' && <SectionTab section="services" fields={SECTION_FIELDS['services'] ?? []} />}
           {tab === 'contact' && <SectionTab section="contact" fields={SECTION_FIELDS['contact'] ?? []} />}
           {tab === 'footer' && <SectionTab section="footer" fields={SECTION_FIELDS['footer'] ?? []} />}

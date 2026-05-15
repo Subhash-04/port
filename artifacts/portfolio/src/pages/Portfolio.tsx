@@ -77,8 +77,8 @@ function cms(content: ContentMap | undefined, key: string, fallback: string): st
 /* ─── DEFAULT DATA (shown before API loads) ─── */
 const DEFAULT_PROJECTS: CmsProject[] = [
   { id: 0, title: 'Spardha 2025', description: 'Tech Fest · Website', imageUrl: 'https://picsum.photos/seed/spardha/800/600', siteUrl: 'https://spardha2k25.vercel.app', category: 'Tech Fest · Website', displayOrder: 0 },
-  { id: 1, title: 'Dharani Printing', description: 'Full-Stack · SaaS', imageUrl: 'https://picsum.photos/seed/dharani/800/600', siteUrl: 'https://dharani-printing-services-subhashmandalap.replit.app/', category: 'Full-Stack · SaaS', displayOrder: 1 },
-  { id: 2, title: 'ACM VVIT', description: 'Interactive · Landing', imageUrl: 'https://picsum.photos/seed/acmvvit/800/600', siteUrl: 'https://subhash-04.github.io/acm_vvit_landingpage-by-Subhash/', category: 'Interactive · Landing', displayOrder: 2 },
+  { id: 1, title: 'Dharani Prints', description: 'Full-Stack · SaaS', imageUrl: 'https://picsum.photos/seed/dharani/800/600', siteUrl: 'https://dharani-printing-services-subhashmandalap.replit.app/', category: 'Full-Stack · SaaS', displayOrder: 1 },
+  { id: 2, title: 'ACM VVITU', description: 'Interactive · Landing', imageUrl: 'https://picsum.photos/seed/acmvvit/800/600', siteUrl: 'https://subhash-04.github.io/acm_vvit_landingpage-by-Subhash/', category: 'Interactive · Landing', displayOrder: 2 },
   { id: 3, title: 'QR Generator', description: 'Frontend · Tool', imageUrl: 'https://picsum.photos/seed/qrgen/800/600', siteUrl: 'https://earnest-semifreddo-abdb5c.netlify.app/', category: 'Frontend · Tool', displayOrder: 3 },
   { id: 4, title: 'Robo Rift', description: 'Interactive · Game', imageUrl: 'https://picsum.photos/seed/roborift/800/600', siteUrl: 'https://subhash-04.github.io/Robo-Rift/', category: 'Interactive · Game', displayOrder: 4 },
   { id: 5, title: 'Echo Trap', description: 'Interactive · Game', imageUrl: 'https://picsum.photos/seed/echotrap/800/600', siteUrl: 'https://subhash-04.github.io/Echo-Trap/', category: 'Interactive · Game', displayOrder: 5 },
@@ -157,56 +157,57 @@ function ProjectModal({ project, onClose }: { project: CmsProject; onClose: () =
         onClick={e => e.stopPropagation()}
         style={{
           position: 'relative',
-          background: 'linear-gradient(140deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.06) 60%, rgba(198,79,23,0.04) 100%)',
-          backdropFilter: 'blur(72px) saturate(200%)',
-          WebkitBackdropFilter: 'blur(72px) saturate(200%)',
+          background: 'linear-gradient(145deg, rgba(255,252,248,0.94) 0%, rgba(244,241,234,0.90) 100%)',
+          backdropFilter: 'blur(56px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(56px) saturate(180%)',
           borderRadius: 32, overflow: 'hidden',
-          border: '1px solid rgba(255,255,255,0.16)',
-          boxShadow: '0 52px 130px rgba(0,0,0,0.7), 0 0 0 0.5px rgba(255,255,255,0.06), inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.2)',
+          border: '1px solid rgba(255,255,255,0.88)',
+          boxShadow: '0 40px 100px rgba(0,0,0,0.22), 0 0 0 0.5px rgba(255,220,180,0.25), inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(0,0,0,0.03)',
           maxWidth: 880, width: '100%',
           display: 'grid', gridTemplateColumns: '1fr 1fr',
           maxHeight: '90vh',
         }}
       >
-        {/* Glass shimmer overlay */}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 45%, rgba(198,79,23,0.03) 100%)', pointerEvents: 'none', zIndex: 1 }} />
+        {/* Warm shimmer overlay */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255,255,255,0.55) 0%, transparent 40%)', pointerEvents: 'none', zIndex: 1 }} />
 
         {/* Left: image */}
-        <div style={{ position: 'relative', minHeight: 340, overflow: 'hidden', background: '#0c0b09', zIndex: 2 }}>
+        <div style={{ position: 'relative', minHeight: 340, overflow: 'hidden', background: '#1a1a17', zIndex: 2 }}>
           {project.imageUrl && (
             <img src={project.imageUrl} alt={project.title}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', opacity: 0.88 }}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             />
           )}
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(6,5,4,0.35) 0%, transparent 55%), linear-gradient(to top, rgba(6,5,4,0.55) 0%, transparent 55%)' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(26,26,23,0.45) 0%, transparent 55%)' }} />
           <div style={{
             position: 'absolute', top: 18, left: 18,
-            background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+            background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
             borderRadius: 999, padding: '5px 14px',
-            border: '1px solid rgba(255,255,255,0.18)',
+            border: '1px solid rgba(255,255,255,0.9)',
             fontFamily: "'Geist Mono', monospace", fontSize: 10, letterSpacing: '0.15em',
-            textTransform: 'uppercase', color: '#ffc99a',
+            textTransform: 'uppercase', color: '#c64f17',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
           }}>{project.category}</div>
         </div>
 
         {/* Right: content */}
         <div style={{ padding: '40px 36px 36px', display: 'flex', flexDirection: 'column', overflowY: 'auto', position: 'relative', zIndex: 2 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 22 }}>
-            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(26px, 3.5vw, 42px)', color: '#f5f0e8', lineHeight: 0.95, margin: 0 }}>
+            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(26px, 3.5vw, 42px)', color: '#1a1a17', lineHeight: 0.95, margin: 0 }}>
               {project.title}
             </h2>
             <button onClick={onClose} style={{
               flexShrink: 0, width: 36, height: 36, borderRadius: '50%',
-              background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.14)',
+              background: 'rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.09)',
               display: 'grid', placeItems: 'center', cursor: 'pointer',
-              color: 'rgba(255,255,255,0.65)', transition: 'background 200ms',
+              color: '#6b6a63', transition: 'background 200ms',
             }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
             </button>
           </div>
 
           {project.description && (
-            <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: 'rgba(255,255,255,0.65)', fontSize: 15, lineHeight: 1.78, margin: '0 0 30px', flex: 1 }}>
+            <p style={{ fontFamily: 'Geist, Inter, sans-serif', color: '#3a3832', fontSize: 15, lineHeight: 1.78, margin: '0 0 30px', flex: 1 }}>
               {project.description}
             </p>
           )}
@@ -219,14 +220,13 @@ function ProjectModal({ project, onClose }: { project: CmsProject; onClose: () =
                 color: '#fff', borderRadius: 14,
                 padding: '13px 24px', fontFamily: 'Geist, Inter, sans-serif',
                 fontSize: 14, fontWeight: 600, textDecoration: 'none',
-                boxShadow: '0 8px 28px rgba(198,79,23,0.45), inset 0 1px 0 rgba(255,255,255,0.2)',
-                border: '1px solid rgba(255,255,255,0.12)',
+                boxShadow: '0 6px 24px rgba(198,79,23,0.35), inset 0 1px 0 rgba(255,255,255,0.18)',
               }}>
                 Visit Site
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg>
               </a>
             )}
-            <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.12em', textAlign: 'center' }}>
+            <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, color: '#9a9890', letterSpacing: '0.12em', textAlign: 'center' }}>
               ESC to close
             </div>
           </div>
@@ -414,12 +414,12 @@ function Nav() {
   return (
     <header style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-      background: scrolled ? 'rgba(244,241,234,0.76)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(32px) saturate(160%)' : 'none',
-      WebkitBackdropFilter: scrolled ? 'blur(32px) saturate(160%)' : 'none',
-      borderBottom: scrolled ? '1px solid rgba(255,255,255,0.62)' : 'none',
-      boxShadow: scrolled ? '0 1px 0 rgba(0,0,0,0.05), 0 4px 28px rgba(0,0,0,0.04)' : 'none',
-      transition: 'background 280ms ease, box-shadow 280ms ease, border-color 280ms ease, backdrop-filter 280ms ease',
+      background: scrolled ? 'rgba(244,241,234,0.85)' : 'rgba(244,241,234,0.5)',
+      backdropFilter: scrolled ? 'blur(36px) saturate(180%)' : 'blur(12px) saturate(140%)',
+      WebkitBackdropFilter: scrolled ? 'blur(36px) saturate(180%)' : 'blur(12px) saturate(140%)',
+      borderBottom: '1px solid rgba(255,255,255,0.72)',
+      boxShadow: scrolled ? '0 1px 0 rgba(0,0,0,0.05), 0 6px 32px rgba(0,0,0,0.06)' : '0 1px 0 rgba(0,0,0,0.03)',
+      transition: 'background 300ms ease, box-shadow 300ms ease, backdrop-filter 300ms ease',
     }}>
       <div className="port-frame" style={{ paddingTop: 20, paddingBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <a href="#top" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none' }}>
@@ -507,10 +507,16 @@ function Hero({ content }: { content: ContentMap }) {
               <a href="#contact" className="port-btn-ghost" style={{ fontSize: 15 }}>Get in touch</a>
             </motion.div>
 
-            <motion.div variants={fadeUp} transition={T} style={{ display: 'flex', flexWrap: 'wrap', gap: 32, marginTop: 44 }}>
+            <motion.div variants={fadeUp} transition={T} style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 44 }}>
               {[[stat1num, stat1label], [stat2num, stat2label], [stat3num, stat3label]].map(([num, label]) => (
-                <div key={label}>
-                  <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 40, color: '#1a1a17', lineHeight: 1 }}>{num}</div>
+                <div key={label} style={{
+                  background: 'rgba(255,255,255,0.62)',
+                  backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(255,255,255,0.85)',
+                  borderRadius: 16, padding: '14px 20px',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.95)',
+                }}>
+                  <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 38, color: '#1a1a17', lineHeight: 1 }}>{num}</div>
                   <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#6b6a63', marginTop: 4 }}>{label}</div>
                 </div>
               ))}
@@ -992,16 +998,21 @@ function Contact({ content }: { content: ContentMap }) {
           </motion.p>
         </Stagger>
         <div style={{ display: 'grid', gridTemplateColumns: '5fr 7fr', gap: 48 }}>
-          <Reveal variant={slideL} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <Reveal variant={slideL} style={{
+            display: 'flex', flexDirection: 'column', gap: 24,
+            background: 'rgba(255,255,255,0.52)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
+            border: '1px solid rgba(255,255,255,0.82)', borderRadius: 24, padding: 28,
+            boxShadow: '0 8px 40px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.95)',
+          }}>
             <div>
               <div className="port-eyebrow" style={{ marginBottom: 6 }}>— Email</div>
-              <a href={`mailto:${contactEmail}`} style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(20px, 3vw, 36px)', color: '#1a1a17', textDecoration: 'none', transition: 'color 200ms ease' }}
+              <a href={`mailto:${contactEmail}`} style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(18px, 2.5vw, 32px)', color: '#1a1a17', textDecoration: 'none', transition: 'color 200ms ease' }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#c64f17')}
                 onMouseLeave={e => (e.currentTarget.style.color = '#1a1a17')}>{contactEmail}</a>
             </div>
             <div>
               <div className="port-eyebrow" style={{ marginBottom: 6 }}>— Based in</div>
-              <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: '#1a1a17' }}>{contactLocation}</div>
+              <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 26, color: '#1a1a17' }}>{contactLocation}</div>
             </div>
             <div>
               <div className="port-eyebrow" style={{ marginBottom: 10 }}>— Find me on</div>
@@ -1011,7 +1022,7 @@ function Contact({ content }: { content: ContentMap }) {
                 ))}
               </div>
             </div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: '#ebe6db', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 999, padding: '8px 14px', fontSize: 13, color: '#2c2a25', width: 'fit-content' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.9)', borderRadius: 999, padding: '8px 14px', fontSize: 13, color: '#2c2a25', width: 'fit-content', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
               <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#16a34a', boxShadow: '0 0 0 4px rgba(22,163,74,0.18)', animation: 'portPulse 2.2s ease-in-out infinite' }} />
               {contactAvailable}
             </div>
